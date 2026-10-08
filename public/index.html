@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tukuk-OS — Web Search Engine</title>
+<meta name="description" content="Tukuk-OS is a free web search engine that indexes websites and delivers statistics. Search fast with snippets, filters and facets.">
+<meta name="keywords" content="search engine, web search, tukuk, inverted index, meilisearch">
+<link rel="canonical" href="https://tukuk.org/">
+<meta property="og:title" content="Tukuk-OS — Web Search Engine">
+<meta property="og:description" content="Free web search engine with snippets, filters and facets.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tukuk.org/">
+<meta property="og:image" content="https://tukuk.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tukuk-OS — Web Search Engine">
+<meta name="twitter:description" content="Tukuk-OS is a free web search engine that indexes websites and delivers statistics. Search fast with snippets, filters and facets.">
+<meta name="twitter:image" content="https://tukuk.org/og.png">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#4c8dff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tukuk-OS">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8954948214333501" crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-8954948214333501">
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --line: #262b36; --text: #e6e9ef;
+    --muted: #9aa3b2; --accent: #4c8dff; --mark: #ffd54a; --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  
+  /* Google-like layout */
+  .google-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 15vh;
+    padding-bottom: 24px;
+  }
+  .logo {
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--text);
+    text-align: center;
+  }
+  .logo span { color: var(--accent); }
+  .logo a { display:block; margin:0 auto; color:inherit; }
+  .logo a:hover { text-decoration:none; opacity:.92; }
+  .logo img {
+    display: block;
+    width: min(560px, 92%);
+    height: auto;
+    margin: 0 auto;
+  }
+  .tagline {
+    color: var(--muted);
+    margin: 0 0 32px;
+    font-size: 1rem;
+    text-align: center;
+  }
+  .search-box {
+    width: 100%;
+    max-width: 640px;
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 16px 56px 16px 20px;
+    font-size: 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--text);
+    outline: none;
+    transition: box-shadow 0.2s;
+  }
+  .search-box input:focus {
+    box-shadow: 0 0 0 3px rgba(76,141,255,0.25);
+    border-color: var(--accent);
+  }
+  .search-box button {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent-fill, #2a6edb);
+    color: #fff;
+  }
+  .search-box button:disabled { opacity:.5; cursor:progress; }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .skip-link { position:absolute; left:-9999px; top:0; z-index:100; background:var(--accent-fill,#2a6edb); color:#fff; padding:10px 16px; border-radius:0 0 8px 0; font-weight:600; }
+  .skip-link:focus { left:0; }
+  
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 24px;
+  }
+  .tabs button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .tabs button:hover {
+    background: var(--panel);
+    color: var(--text);
+  }
+  .tabs button.on {
+    background: var(--accent-fill, #2a6edb);
+    color: #fff;
+  }
+  
+  .results-area {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    margin: 18px 0 12px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  select, .chip {
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .facets { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px; }
+  .facets summary { cursor:pointer; color:var(--muted); font-size:.9rem; }
+  .facets-body { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .facet-group { display:flex; flex-wrap:wrap; gap:6px; align-items:center; width:100%; }
+  .facet-label { color:var(--muted); font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; min-width:96px; }
+  .chip.on { border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; }
+  .chip .n { color:var(--muted); font-size:.8em; }
+  .result { padding:18px 0; border-bottom:1px solid var(--line); }
+  .result h2 { margin:0 0 4px; font-size:1.15rem; font-weight:600; }
+  .result h2 a { color:var(--text); }
+  .url { color:var(--muted); font-size:.85rem; margin-bottom:6px; word-break:break-all; }
+  .snippet { margin:0; color:var(--text); }
+  mark { background:var(--mark); color:#111; padding:0 2px; border-radius:3px; }
+  .empty { text-align:center; padding:60px 0; color:var(--muted); }
+
+  /* Keputusan imej */
+  .img-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px; padding-top:8px; }
+  .img-card { border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--panel);
+    display:block; color:var(--text); }
+  .img-card:hover { border-color:var(--accent); }
+  .img-card .ph { display:block; width:100%; height:140px; object-fit:cover; background:rgba(128,128,128,.15); }
+  .img-card .cap { padding:8px 10px; font-size:.8rem; color:var(--muted); overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap; }
+
+  /* Keputusan video */
+  .video-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; padding-top:8px; }
+  .video-card { border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--panel);
+    color:var(--text); display:flex; flex-direction:column; }
+  .video-card:hover { border-color:var(--accent); }
+  .video-card .ph { position:relative; display:block; background:rgba(128,128,128,.15); }
+  .video-card .ph img { width:100%; height:170px; object-fit:cover; display:block; }
+  .video-card .len { position:absolute; right:8px; bottom:8px; background:rgba(0,0,0,.82); color:#fff;
+    font-size:.72rem; padding:2px 6px; border-radius:4px; }
+  .video-card .body { padding:10px 12px; }
+  /* Pemain video dalam tukuk.org — modal embed, pelanggan tak keluar laman */
+  .vmodal { position:fixed; inset:0; z-index:90; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .vmodal[hidden] { display:none; }
+  .vmodal-bd { position:absolute; inset:0; background:rgba(4,8,15,.78); }
+  .vmodal-box { position:relative; width:min(880px,100%); background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; overflow:hidden; box-shadow:0 18px 60px rgba(0,0,0,.5); }
+  .vmodal-head { display:flex; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid var(--line); }
+  .vmodal-head .t { flex:1; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .vmodal-head .x { background:none; border:0; color:var(--text); font-size:1.25rem; cursor:pointer; padding:0 6px; line-height:1; }
+  .vmodal-frame { position:relative; aspect-ratio:16/9; background:#000; }
+  .vmodal-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .vmodal-foot { padding:8px 14px; border-top:1px solid var(--line); font-size:.85rem; }
+  .video-card .body h3 { margin:0 0 4px; font-size:.98rem; font-weight:600; }
+  .art-ph { display:flex; align-items:center; justify-content:center; font-size:2.2rem; }
+  .art-ph img { position:absolute; inset:0; }
+  .radio-ph img { object-fit:cover; background:#fff; }
+  .card-actions { display:flex; align-items:center; gap:10px; margin-top:8px; }
+  .play-btn { width:34px; height:34px; border-radius:50%; border:0; background:var(--accent-fill,#2a6edb); color:#fff; font-size:.95rem; cursor:pointer; flex:none; }
+  .play-btn.playing { background:var(--danger,#ff5555); }
+  .src-link { font-size:.85rem; color:var(--muted,#9aa4b2); text-decoration:none; }
+  .src-link:hover { text-decoration:underline; }
+  .audio-bar { position:fixed; left:16px; bottom:16px; z-index:80; display:flex; align-items:center; gap:10px; background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:8px 8px 8px 16px; box-shadow:0 6px 20px rgba(0,0,0,.35); max-width:min(360px,70vw); }
+  .audio-bar[hidden] { display:none; }
+  .audio-bar .ab-title { font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .audio-bar button { border:0; background:var(--accent-fill,#2a6edb); color:#fff; width:30px; height:30px; border-radius:50%; cursor:pointer; flex:none; }
+  .video-card .meta { font-size:.8rem; color:var(--muted); }
+  .load-more { display:block; margin:26px auto 0; padding:10px 24px; border:1px solid var(--line);
+    background:var(--panel); color:var(--text); border-radius:var(--radius); cursor:pointer; font-size:.92rem; }
+  .load-more:hover:not([disabled]) { border-color:var(--accent); color:var(--accent); }
+  .load-more[disabled] { opacity:.6; cursor:wait; }
+
+  .answer-card { border:1px solid var(--line); border-left:3px solid var(--accent,#2a6edb);
+    background:rgba(42,110,219,.07); border-radius:10px; padding:12px 14px; margin:0 0 14px; }
+  .answer-card .a-head { font-weight:600; font-size:.9rem; margin-bottom:6px; }
+  .answer-card .a-head .src { font-weight:400; opacity:.7; margin-left:6px; font-size:.82rem; }
+  .answer-card p { margin:0; font-size:.96rem; line-height:1.55; }
+  .dym { margin:0 0 12px; font-size:.98rem; }
+  .dym button { background:none; border:0; padding:0; color:var(--accent,#2a6edb);
+    text-decoration:underline; cursor:pointer; font-size:inherit; font-family:inherit; }
+  .related { margin:18px 0 8px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .related .rel-label { width:100%; font-size:.85rem; opacity:.75; }
+  .trending-home { text-align:center; padding:26px 0 8px; }
+  .trending-home .t-label { display:block; font-size:.9rem; color:var(--muted); margin-bottom:12px; }
+  .trending-home .chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+
+  footer { margin:60px 0 40px; padding-top:24px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:.9rem; text-align:center; }
+  footer a { margin: 0 10px; }
+  
+  .suggest { position:relative; }
+  .suggest-list { position:absolute; z-index:10; left:0; right:56px; top:48px;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; box-shadow:0 12px 32px rgba(0,0,0,.28); }
+  .suggest-list div { padding:9px 16px; cursor:pointer; font-size:.93rem; }
+  .suggest-list div:hover, .suggest-list div.on { background:var(--accent-fill,#2a6edb); color:#fff; }
+  
+  /* Floating chat button */
+  .chat-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent-fill, #2a6edb);
+    color: #fff;
+    border: 0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,.3);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chat-fab:hover { transform: scale(1.05); }
+  
+  /* Chat panel */
+  .chat-panel {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 380px;
+    max-height: 520px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 32px rgba(0,0,0,.3);
+    z-index: 99;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .chat-panel.open { display: flex; }
+  .chat-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .chat-header button {
+    background: none;
+    color: var(--muted);
+    font-size: 1.2rem;
+    padding: 4px 8px;
+    cursor: pointer;
+    border: 0;
+  }
+  .chat-body {
+    padding: 14px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .chat-answer { margin-top:12px; padding:14px; background:var(--bg);
+    border:1px solid var(--line); border-radius:var(--radius); }
+  .chat-answer p { margin:0; color:var(--text); line-height:1.7; }
+  .chat-answer .sources { margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
+  .chat-answer .sources a { display:block; color:var(--accent); font-size:.85rem;
+    text-decoration:none; margin-bottom:4px; word-break:break-all; }
+  .chat-answer .mode { display:inline-block; margin-bottom:8px; padding:3px 10px;
+    font-size:.75rem; color:var(--muted); border:1px solid var(--line); border-radius:999px; }
+  .chat-form {
+    display: flex;
+    gap: 8px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--line);
+  }
+  .chat-form input {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+  }
+  .chat-form input:focus { border-color: var(--accent); }
+  .chat-form button {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent-fill, #2a6edb);
+    color: #fff;
+  }
+  .chat-form button:disabled { opacity:.5; cursor:progress; }
+  
+  @media (max-width: 640px) {
+    .logo { font-size: 2.5rem; }
+    .chat-panel { width: calc(100% - 40px); right: 20px; left: 20px; }
+  }
+
+  .ad-slot{margin:24px 0;overflow:hidden;}
+</style>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme.css">
+<!-- Clarity tracking code for https://tukuk.org/ -->
+<script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ytshvg0zer");
+</script>
+<script async src="https://fundingchoicesmessages.google.com/i/pub-8954948214333501?ers=1"></script><script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
+<script src="/fc-error.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#results">Skip to results</a>
+<nav class="wrap" style="display:flex; justify-content:flex-end; flex-wrap:wrap; gap:16px; padding:16px 20px 0; font-size:0.92rem;">
+  <a href="/">Home</a>
+  <a href="/explore">Explore</a>
+  <a href="/nasa">NASA</a>
+  <a href="/blog">Blog</a>
+  <a href="/docs">Docs</a>
+  <a href="/about">About</a>
+  <a href="/privacy">Privacy</a>
+  <a href="/terms">Terms</a>
+  <a href="/contact">Contact</a>
+  <span class="theme-tools">
+    <button type="button" id="theme-toggle" class="tk-btn" aria-label="Colour theme">◐</button>
+    <span class="tk-accents" role="group" aria-label="Accent colour">
+      <button type="button" data-accent-set="blue" class="tk-dot" aria-label="Blue"></button>
+      <button type="button" data-accent-set="green" class="tk-dot" aria-label="Green"></button>
+      <button type="button" data-accent-set="violet" class="tk-dot" aria-label="Violet"></button>
+      <button type="button" data-accent-set="amber" class="tk-dot" aria-label="Amber"></button>
+      <button type="button" data-accent-set="rose" class="tk-dot" aria-label="Rose"></button>
+    </span>
+  </span>
+</nav>
+<header class="wrap google-header" style="padding-top:8vh;">
+  <h1 class="logo"><a href="/" aria-label="Tukuk OS — home"><img src="logo.png" alt="Tukuk OS — Web Search Engine"></a></h1>
+  <p class="tagline">Free web search engine — inverted index, word highlighting, faceted filters</p>
+  <form id="form" class="search-box suggest" autocomplete="off">
+    <input type="search" id="q" name="q" placeholder="Search the web&hellip;" aria-label="Search keywords" role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list" required>
+    <div class="suggest-list" id="suggest" role="listbox" aria-label="Search suggestions" hidden></div>
+    <button type="submit" id="go">Search</button>
+  </form>
+  <div class="tabs" id="tabs">
+    <button type="button" data-mode="web" class="on">Web</button>
+    <button type="button" data-mode="images">Images</button>
+    <button type="button" data-mode="videos">Videos</button>
+    <button type="button" data-mode="news">News</button>
+    <button type="button" data-mode="music">Music</button>
+    <button type="button" data-mode="radio">Radio</button>
+  </div>
+</header>
+
+<main class="wrap results-area">
+    <div class="ad-slot"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8954948214333501" data-ad-slot="2206273113" data-ad-format="auto" data-full-width-responsive="true"></ins></div>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  <div class="meta" id="meta" role="status" aria-live="polite" hidden>
+    <span id="count"></span>
+    <span id="took"></span>
+    <span id="corpus" hidden></span>
+    <select id="sort" aria-label="Sort results">
+      <option value="">Relevance</option>
+      <option value="newest">Newest</option>
+      <option value="longest">Longest</option>
+      <option value="shortest">Shortest</option>
+    </select>
+  </div>
+  <details class="facets" id="facetBox" hidden><summary>Result filters</summary><div class="facets-body" id="facets"></div></details>
+  <section id="results" aria-live="polite"></section>
+</main>
+
+<footer class="wrap" style="text-align:center; padding:32px 20px 48px; border-top:1px solid var(--line); margin-top:40px;">
+  <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; font-size:0.92rem; margin-bottom:12px;">
+    <a href="/">Home</a>
+    <a href="/nasa">🚀 NASA Explorer</a>
+    <a href="/blog">Blog &amp; Articles</a>
+    <a href="/learn">Learn 0 → Hero</a>
+    <a href="/docs">API Docs</a>
+    <a href="/about">About</a>
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms of Service</a>
+    <a href="/contact">Contact Us</a>
+    <a href="/access">Global Access</a>
+    <a href="/bingbot">Verify Bingbot</a>
+    <a href="/health">Health</a>
+    <a href="/stats">Statistics</a>
+  </div>
+  <p style="margin:8px 0 0; color:var(--muted); font-size:0.88rem;">&copy; 2026 Tukuk-OS &mdash; All Rights Reserved. Free &amp; Open Web Search Engine.</p>
+</footer>
+
+<button class="chat-fab" id="chatFab" title="Chat AI" aria-label="Open AI chat">&#128172;</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <span>Chat AI</span>
+    <button id="chatClose" aria-label="Close chat">&times;</button>
+  </div>
+  <div class="chat-body" id="chatBody">
+    <div id="chatAnswer" class="chat-answer" hidden></div>
+  </div>
+  <form class="chat-form" id="chatForm" autocomplete="off">
+    <input type="search" id="chatQ" placeholder="Ask anything&hellip;" aria-label="Chat question" required>
+    <button type="submit">Ask</button>
+  </form>
+</div>
+
+<audio id="mediaAudio" preload="none"></audio>
+<div class="audio-bar" id="audioBar" hidden>
+  <span class="ab-title" id="audioBarTitle"></span>
+  <button type="button" id="audioBarStop" aria-label="Stop player">&#9209;</button>
+</div>
+
+<div class="vmodal" id="vmodal" hidden>
+  <div class="vmodal-bd"></div>
+  <div class="vmodal-box" role="dialog" aria-modal="true" aria-labelledby="vmodal-title">
+    <div class="vmodal-head"><span class="t" id="vmodal-title"></span><button type="button" class="x" id="vmodal-x" aria-label="Close">&#10005;</button></div>
+    <div class="vmodal-frame"><iframe id="vmodal-frame" src="" title="Video player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+    <div class="vmodal-foot"><a id="vmodal-link" href="#" target="_blank" rel="noopener">Open on YouTube</a></div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let query = '', offset = 0, mode = 'web', corpus = '';
+
+const FILTER_PARAMS = ['host', 'lang', 'section', 'site', 'type', 'after', 'before', 'minWords', 'excludeHost'];
+
+// ── Prefetch keputusan semasa menaip (gaya Google Instant) ──
+// /search melalui terowong Cloudflare ambil ~0.4s dari luar; dengan menghantar
+// request semasa pengguna berehat menaip (debounce sedia ada), tekan Enter
+// hanya menunggu respons yang hampir siap — kadangkala serta-merta.
+const preCache = new Map(); // url -> Promise<data|null>
+const preAt = new Map();    // url -> bila request dihantar (ms)
+const PRE_TTL = 30000;
+const PRE_MAX = 24;
+
+function buildSearchURL(q) {
+  const p = new URLSearchParams({ q, limit: '20', offset: '0' });
+  if (corpus) p.set('index', corpus);
+  const s = $('sort').value;
+  if (s) p.set('sort', s);
+  const current = new URLSearchParams(location.search);
+  for (const key of FILTER_PARAMS) {
+    const v = current.get(key);
+    if (v) p.set(key, v);
+  }
+  return `/search?${p}`;
+}
+
+function prefetchSearch(q) {
+  if (!q || q.length < 2 || mode !== 'web') return;
+  const url = buildSearchURL(q);
+  const now = Date.now();
+  if (preCache.has(url) && now - (preAt.get(url) || 0) < PRE_TTL) return;
+  const p = fetch(url)
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null)
+    .then((data) => {
+      if (!data) { preCache.delete(url); preAt.delete(url); }
+      return data;
+    });
+  preCache.set(url, p);
+  preAt.set(url, now);
+  while (preCache.size > PRE_MAX) {
+    const old = preCache.keys().next().value;
+    preCache.delete(old);
+    preAt.delete(old);
+  }
+}
+
+function renderCorpus() {
+  const el = $('corpus');
+  if (!corpus) { el.hidden = true; el.innerHTML = ''; return; }
+  const back = new URLSearchParams();
+  if (query) back.set('q', query);
+  back.set('mode', mode);
+  el.hidden = false;
+  el.innerHTML = `<span class="chip" title="Search the test corpus instead of the live index">corpus: ${esc(corpus)}</span> <a href="/?${back}" title="Back to the live index" style="color:var(--muted)">&#10005;</a>`;
+}
+
+function readURL() {
+  const p = new URLSearchParams(location.search);
+  query = p.get('q') || '';
+  mode = p.get('mode') || 'web';
+  offset = Number(p.get('offset') || 0);
+  corpus = p.get('index') === 'uji_coba' ? 'uji_coba' : '';
+  $('q').value = query;
+  setMode(mode, false);
+  renderCorpus();
+  return query;
+}
+
+function pushURL(extra = {}) {
+  const p = new URLSearchParams();
+  if (query) p.set('q', query);
+  p.set('mode', mode);
+  const s = $('sort').value;
+  if (s) p.set('sort', s);
+  if (extra.limit) p.set('limit', extra.limit);
+  if (offset) p.set('offset', offset);
+  if (corpus) p.set('index', corpus);
+  const current = new URLSearchParams(location.search);
+  for (const key of FILTER_PARAMS) {
+    const v = current.get(key);
+    if (v) p.set(key, v);
+  }
+  history.replaceState(null, '', `/?${p}`);
+}
+
+function setMode(m, push = true) {
+  mode = m;
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.classList.toggle('on', b.dataset.mode === m);
+  });
+  $('sort').hidden = m !== 'web';
+  $('facetBox').hidden = true;
+  if (push) {
+    const p = new URLSearchParams();
+    if (query) p.set('q', query);
+    p.set('mode', m);
+    if (corpus) p.set('index', corpus);
+    history.replaceState(null, '', `/?${p}`);
+  }
+}
+
+async function run() {
+  const q = $('q').value.trim();
+  if (!q) return;
+  query = q;
+  offset = 0;
+  pushURL();
+  const out = $('results');
+  out.innerHTML = '<div class="empty">Loading...</div>';
+  try {
+    const base = buildSearchURL(query);
+    const isWeb = mode === 'web';
+    const url = isWeb ? base : `/${mode}?q=${encodeURIComponent(query)}`;
+    let data;
+    if (isWeb) {
+      // Web: HANTAR ketiga-tiga serentak, tetapi jangan tunggu — papar indeks
+      // tempatan SEGERA, sambung hasil web & jawapan AI bila sedia.
+      const webFetch = fetch(`/websearch?q=${encodeURIComponent(query)}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
+      const answerFetch = fetch(`/answer?q=${encodeURIComponent(query)}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
+      // Guna respons prefetch (dihantar semasa menaip) bila masih segar —
+      // Enter terus papar hasil tanpa menunggu pusingan rangkaian penuh.
+      const pre = preCache.get(base);
+      if (pre && Date.now() - (preAt.get(base) || 0) < PRE_TTL) {
+        preCache.delete(base);
+        preAt.delete(base);
+        data = await pre;
+      }
+      if (!data) {
+        const res = await fetch(url);
+        data = await res.json();
+        if (!res.ok) throw new Error(data.error || res.statusText);
+      }
+      renderResults(data, mode);
+      if (!(data.hits || []).length) $('results').innerHTML = '<div class="empty">Searching the wider web…</div>';
+      webFetch.then((w) => {
+        if (!w || !(w.hits || []).length) {
+          if (!(data.hits || []).length) $('results').innerHTML = '<div class="empty">No results.</div>';
+          return;
+        }
+        const hostOf = (u) => { try { return new URL(u, location.href).hostname.replace(/^www\./, ''); } catch { return String(u || ''); } };
+        const seen = new Set((data.hits || []).map((h) => hostOf(h.url)));
+        const extra = w.hits.filter((h) => h && h.url && !seen.has(hostOf(h.url))).slice(0, 20);
+        if (!extra.length) return;
+        data.webHits = extra;
+        data.webProvider = w.provider || 'web';
+        renderResults(data, mode);
+      });
+      answerFetch.then((a) => {
+        if (!a || !a.answer) return;
+        data.answer = a;
+        renderResults(data, mode);
+      });
+      return;
+    }
+    const res = await fetch(url);
+    data = await res.json();
+    if (!res.ok) throw new Error(data.error || res.statusText);
+    renderResults(data, mode);
+  } catch (e) {
+    out.innerHTML = `<div class="empty">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+const FACET_FIELDS = [
+  ['section', 'Section'],
+  ['lang', 'Language'],
+  ['host', 'Site'],
+  ['siteName', 'Publisher'],
+  ['type', 'Type']
+];
+
+function activeFilter(field) {
+  return new URLSearchParams(location.search).get(field === 'siteName' ? 'site' : field) || '';
+}
+
+function renderFacets(data, m) {
+  const box = $('facetBox');
+  const body = $('facets');
+  const dist = data.facetDistribution;
+  if (m !== 'web' || !dist) {
+    box.hidden = true;
+    body.innerHTML = '';
+    return;
+  }
+  let html = '';
+  for (const [field, label] of FACET_FIELDS) {
+    const counts = dist[field];
+    if (!counts) continue;
+    const entries = Object.entries(counts)
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8);
+    if (!entries.length) continue;
+    html += `<div class="facet-group"><span class="facet-label">${label}</span>`;
+    html += entries
+      .map(([value, count]) => {
+        const param = field === 'siteName' ? 'site' : field;
+        const on = activeFilter(param) === value;
+        return `<button type="button" class="chip${on ? ' on' : ''}" data-f="${param}" data-v="${esc(value)}">${esc(value)} <span class="n">${count}</span></button>`;
+      })
+      .join('');
+    html += '</div>';
+  }
+  body.innerHTML = html;
+  box.hidden = !html;
+  box.open = !!html;
+}
+
+function imageCard(h) {
+  return `<a class="img-card" href="${esc(h.image || h.url)}" target="_blank" rel="noopener">
+    <img class="ph" src="${esc(h.thumbnail || h.image || h.url || '')}" alt="${esc(h.title || 'image')}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">
+    <div class="cap" title="${esc(h.title || '')}">${esc(h.title || h.source || '')}</div>
+  </a>`;
+}
+
+function videoCard(h) {
+  return `<a class="video-card" href="${esc(h.url)}" target="_blank" rel="noopener">
+    <span class="ph">${h.thumbnail ? `<img src="${esc(h.thumbnail)}" alt="${esc(h.title || 'video')}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">` : ''}${h.length ? `<span class="len">${esc(h.length)}</span>` : ''}</span>
+    <div class="body">
+      <h3>${esc(h.title || '')}</h3>
+      <div class="meta">${esc(h.description || h.source || h.url || '')}</div>
+    </div>
+  </a>`;
+}
+
+function timeAgo(ms) {
+  if (!ms) return '';
+  const s = Math.max(0, (Date.now() - ms) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
+}
+
+function newsCard(h) {
+  const meta = [h.source, timeAgo(h.publishedAt)].filter(Boolean).join(' · ');
+  return `<a class="video-card" href="${esc(h.url)}" target="_blank" rel="noopener">
+    <span class="ph">${h.image ? `<img src="${esc(h.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">` : '\ud83d\udcf0'}</span>
+    <div class="body">
+      <h3>${esc(h.title || '')}</h3>
+      <div class="meta">${esc(meta)}</div>
+      ${h.description ? `<p class="snippet" style="margin-top:4px;">${esc(h.description)}</p>` : ''}
+    </div>
+  </a>`;
+}
+
+function musicCard(h) {
+  return `<div class="video-card">
+    <span class="ph art-ph">\ud83c\udfb5${h.artwork ? `<img src="${esc(h.artwork)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">` : ''}</span>
+    <div class="body">
+      <h3>${esc(h.title || '')}</h3>
+      <div class="meta">${esc(h.description || '')}${h.duration ? ` &middot; ${esc(h.duration)}` : ''}</div>
+      <div class="card-actions">
+        ${h.preview ? `<button type="button" class="play-btn" data-audio="${esc(h.preview)}" data-title="${esc(h.title || 'Music')}" aria-label="Play ${esc(h.title || 'music')}">\u25b6</button>` : ''}
+        ${h.url ? `<a class="src-link" href="${esc(h.url)}" target="_blank" rel="noopener">Open &#8599;</a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function radioCard(h) {
+  const meta = [h.country, h.codec, h.bitrate ? `${h.bitrate} kbps` : ''].filter(Boolean).join(' \u00b7 ');
+  return `<div class="video-card">
+    <span class="ph art-ph radio-ph">\ud83d\udcefb${h.favicon ? `<img src="${esc(h.favicon)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}</span>
+    <div class="body">
+      <h3>${esc(h.title || '')}</h3>
+      <div class="meta">${esc(meta || h.source || '')}${h.tags && h.tags.length ? ` &middot; ${esc(h.tags.join(', '))}` : ''}</div>
+      <div class="card-actions">
+        <button type="button" class="play-btn" data-audio="${esc(h.url)}" data-title="${esc(h.title || 'Radio')}" aria-label="Play ${esc(h.title || 'radio station')}">\u25b6</button>
+        ${h.url ? `<a class="src-link" href="${esc(h.url)}" target="_blank" rel="noopener">Stream &#8599;</a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+let mediaState = { mode: '', q: '', page: 0, sp: '' };
+
+function loadMoreHtml(more) {
+  return more ? '<div style="text-align:center;"><button type="button" class="load-more" id="loadMoreBtn" onclick="loadMoreMedia()">Load more results</button></div>' : '';
+}
+
+async function loadMoreMedia() {
+  const btn = document.getElementById('loadMoreBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
+  try {
+    const m0 = mediaState.mode;
+    const url = m0 === 'images'
+      ? `/images?q=${encodeURIComponent(mediaState.q)}&page=${mediaState.page}`
+      : m0 === 'music'
+        ? `/music?q=${encodeURIComponent(mediaState.q)}&offset=${encodeURIComponent(mediaState.sp || 0)}`
+        : m0 === 'radio'
+          ? `/radio?q=${encodeURIComponent(mediaState.q)}&skip=${encodeURIComponent(mediaState.sp || 0)}`
+          : m0 === 'news'
+            ? `/news?q=${encodeURIComponent(mediaState.q)}&offset=${encodeURIComponent(mediaState.sp || 0)}`
+            : `/videos?q=${encodeURIComponent(mediaState.q)}&sp=${encodeURIComponent(mediaState.sp)}`;
+    const data = await (await fetch(url)).json();
+    const hits = data.hits || [];
+    const grid = document.querySelector(m0 === 'images' ? '.img-grid' : '.video-list');
+    const cardFn = m0 === 'images' ? imageCard : m0 === 'music' ? musicCard : m0 === 'radio' ? radioCard : m0 === 'news' ? newsCard : videoCard;
+    if (grid && hits.length) grid.insertAdjacentHTML('beforeend', hits.map(cardFn).join(''));
+    mediaState.page = data.nextPage || 0;
+    mediaState.sp = m0 === 'music' ? (data.nextOffset || 0) : m0 === 'radio' ? (data.nextSkip || 0) : m0 === 'news' ? (data.nextOffset || 0) : (data.nextSp || '');
+    const live = document.getElementById('loadMoreBtn');
+    const more = m0 === 'images' ? !!data.nextPage : m0 === 'music' ? !!data.nextOffset : m0 === 'radio' ? !!data.nextSkip : m0 === 'news' ? !!data.nextOffset : !!data.nextSp;
+    if (live) {
+      if (more && hits.length) { live.disabled = false; live.textContent = 'Load more results'; }
+      else live.remove();
+    }
+  } catch {
+    const live = document.getElementById('loadMoreBtn');
+    if (live) { live.disabled = false; live.textContent = 'Retry — failed to load'; }
+  }
+}
+
+function hitCard(hit) {
+  const title = hit._formatted?.title || hit.title || hit.url;
+  const url = hit.url;
+  const snippet = hit._formatted?.content || hit.description || hit.snippet || '';
+  const cleanSnippet = snippet.replace(/<[^>]+>/g, '').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/&quot;/gi, '"').replace(/&#39;/gi, "'");
+  const engineTag = hit.engine ? `<span style="opacity:.65;"> · ${esc(hit.engine)}</span>` : '';
+  return `<div class="result">
+      <h2><a href="${esc(url)}" target="_blank">${esc(title)}</a></h2>
+      <div class="url">${esc(url)}${engineTag}</div>
+      <p class="snippet">${esc(cleanSnippet)}</p>
+    </div>`;
+}
+
+function renderResults(data, m) {
+  const out = $('results');
+  const hits = data.hits || [];
+  renderFacets(data, m);
+  const totalShown = hits.length + (m === 'web' && data.webHits ? data.webHits.length : 0);
+  $('count').textContent = `${totalShown} results`;
+  $('took').textContent = data.tookMs ? `${data.tookMs}ms` : (data.provider ? `${data.provider}` : '');
+  $('meta').hidden = false;
+  const dymHtml = m === 'web' && data.didYouMean
+    ? `<div class="dym">Did you mean: <button type="button" data-sugq="${esc(data.didYouMean)}">${esc(data.didYouMean)}</button></div>`
+    : '';
+  const ansHtml = m === 'web' && data.answer && data.answer.answer
+    ? `<div class="answer-card"><div class="a-head">Answer<span class="src">${esc((data.answer.sourceNames || []).join(' · '))}${data.answer.tookMs ? ` · ${data.answer.tookMs}ms` : ''}</span></div><p>${esc(data.answer.answer)}</p></div>`
+    : '';
+  if (hits.length === 0 && !(data.webHits && data.webHits.length)) {
+    out.innerHTML = dymHtml + ansHtml + `<div class="empty">No results.${m === 'web' ? '' : ' Try the Web tab or a different query.'}</div>`;
+    return;
+  }
+
+  if (m === 'images') {
+    mediaState = { mode: 'images', q: query, page: data.nextPage || 0, sp: '' };
+    out.innerHTML = `<div class="img-grid">${hits.map(imageCard).join('')}</div>${loadMoreHtml(!!data.nextPage)}`;
+    return;
+  }
+
+  if (m === 'videos') {
+    mediaState = { mode: 'videos', q: query, page: 0, sp: data.nextSp || '' };
+    out.innerHTML = `<div class="video-list">${hits.map(videoCard).join('')}</div>${loadMoreHtml(!!data.nextSp)}`;
+    return;
+  }
+
+  if (m === 'news') {
+    mediaState = { mode: 'news', q: query, page: 0, sp: data.nextOffset || 0 };
+    out.innerHTML = `<div class="video-list">${hits.map(newsCard).join('')}</div>${loadMoreHtml(!!data.nextOffset)}`;
+    return;
+  }
+
+  if (m === 'music') {
+    mediaState = { mode: 'music', q: query, page: 0, sp: data.nextOffset || 0 };
+    out.innerHTML = `<div class="video-list">${hits.map(musicCard).join('')}</div>${loadMoreHtml(!!data.nextOffset)}`;
+    return;
+  }
+
+  if (m === 'radio') {
+    mediaState = { mode: 'radio', q: query, page: 0, sp: data.nextSkip || 0 };
+    out.innerHTML = `<div class="video-list">${hits.map(radioCard).join('')}</div>${loadMoreHtml(!!data.nextSkip)}`;
+    return;
+  }
+
+  let html = dymHtml + ansHtml + hits.map(hitCard).join('');
+  if (m === 'web' && data.webHits && data.webHits.length) {
+    const label = hits.length ? 'More from the web' : 'Web results';
+    html += `<div class="result" style="border-top:1px solid var(--line,#262b36);margin-top:10px;padding-top:4px;"><h2 style="margin-bottom:2px;">${label} <span class="url" style="font-weight:400;">via ${esc(data.webProvider)}</span></h2></div>`;
+    html += data.webHits.map(hitCard).join('');
+  }
+  if (m === 'web' && data.related && data.related.length) {
+    html += `<div class="related"><span class="rel-label">Related searches</span>${data.related.map((r) => `<button type="button" class="chip" data-sugq="${esc(r)}">${esc(r)}</button>`).join('')}</div>`;
+  }
+  out.innerHTML = html;
+}
+
+function buildFilter(query) {
+  const filters = [];
+  if (query.host) filters.push(`host = "${query.host}"`);
+  if (query.lang) filters.push(`lang = "${query.lang}"`);
+  if (query.type) filters.push(`type = "${query.type}"`);
+  if (query.site) filters.push(`siteName = "${query.site}"`);
+  if (query.section) filters.push(`section = "${query.section}"`);
+  if (query.after) filters.push(`crawledAt > "${query.after}"`);
+  if (query.before) filters.push(`crawledAt < "${query.before}"`);
+  if (query.minWords) filters.push(`wordCount >= ${Number(query.minWords) || 0}`);
+  return filters;
+}
+
+$('form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  query = $('q').value.trim();
+  offset = 0;
+  if (query) { pushURL(); run(); }
+});
+
+$('sort').addEventListener('change', () => { offset = 0; pushURL(); run(); });
+
+// Klik "Did you mean" / chip "Related searches" / trending → cari semula.
+$('results').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-sugq]');
+  if (!btn) return;
+  const next = btn.dataset.sugq || '';
+  if (!next) return;
+  $('q').value = next;
+  query = next;
+  offset = 0;
+  pushURL();
+  run();
+});
+
+$('facets').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  const p = new URLSearchParams(location.search);
+  const field = chip.dataset.f;
+  const value = chip.dataset.v;
+  if (p.get(field) === value) p.delete(field);
+  else p.set(field, value);
+  p.set('q', query);
+  p.set('mode', mode);
+  p.delete('offset');
+  if (corpus) p.set('index', corpus);
+  else p.delete('index');
+  history.replaceState(null, '', `/?${p}`);
+  $('q').value = query; offset = 0;
+  run();
+});
+
+document.querySelectorAll('#tabs button').forEach((btn) => {
+  btn.addEventListener('click', () => { offset = 0; setMode(btn.dataset.mode); run(); });
+});
+
+$('q').addEventListener('input', () => {
+  clearTimeout(timer);
+  const v = $('q').value.trim();
+  if (v.length < 2) { const s0 = $('suggest'); if (s0) s0.hidden = true; $('q').setAttribute('aria-expanded','false'); return; }
+  timer = setTimeout(async () => {
+    prefetchSearch(v);
+    try {
+      const d = await (await fetch('/suggest?q=' + encodeURIComponent(v))).json();
+      const list = $('suggest');
+      if (!d.suggestions?.length) { list.hidden = true; $('q').setAttribute('aria-expanded','false'); return; }
+      list.innerHTML = d.suggestions
+        .map((s, i) => `<div role="option" id="sug-${i}" data-q="${esc(s.title || s)}">${esc(s.title || s)}</div>`).join('');
+      list.querySelectorAll('div[data-q]').forEach((el) => {
+        el.addEventListener('mousedown', (ev) => {
+          ev.preventDefault();
+          $('q').value = el.dataset.q;
+          list.hidden = true;
+          $('q').setAttribute('aria-expanded','false');
+          run();
+        });
+      });
+      list.hidden = false;
+      $('q').setAttribute('aria-expanded','true');
+      sugHi(-1);
+    } catch { /* ignore */ }
+  }, 180);
+});
+
+function sugItems() { const s = $('suggest'); return s ? Array.from(s.querySelectorAll('[role="option"]')) : []; }
+function sugHi(i) {
+  const items = sugItems();
+  items.forEach((el, j) => el.classList.toggle('on', j === i));
+  const inp = $('q');
+  if (i >= 0 && items[i]) inp.setAttribute('aria-activedescendant', items[i].id);
+  else inp.removeAttribute('aria-activedescendant');
+}
+$('q').addEventListener('keydown', (e) => {
+  const s = $('suggest');
+  if (!s || s.hidden) return;
+  const items = sugItems();
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') { e.preventDefault(); sugHi(Math.min(sugIdx + 1, items.length - 1)); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); sugHi(Math.max(sugIdx - 1, -1)); }
+  else if (e.key === 'Enter' && sugIdx >= 0) { e.preventDefault(); $('q').value = items[sugIdx].dataset.q; s.hidden = true; $('q').setAttribute('aria-expanded','false'); sugHi(sugIdx = -1); run(); }
+  else if (e.key === 'Escape') { s.hidden = true; $('q').setAttribute('aria-expanded','false'); sugHi(sugIdx = -1); }
+});
+
+let sugIdx = -1;
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.suggest')) {
+    const s = $('suggest'); if (s) s.hidden = true;
+    $('q').setAttribute('aria-expanded', 'false');
+    sugIdx = -1;
+  }
+});
+
+query = readURL();
+if (query) run();
+else {
+  // Homepage kosong — papar carian trending 7 hari lepas (kalau ada log).
+  fetch('/trending').then((r) => (r.ok ? r.json() : null)).then((t) => {
+    const list = t && t.queries ? t.queries : [];
+    if (!list.length) return;
+    const box = document.getElementById('results');
+    if (!box || box.children.length) return;
+    box.innerHTML = `<div class="trending-home"><span class="t-label">Trending searches</span><div class="chips">${list.map((x) => `<button type="button" class="chip" data-sugq="${esc(x.q)}">${esc(x.q)} <span class="n">${x.count}</span></button>`).join('')}</div></div>`;
+  }).catch(() => {});
+}
+
+// Chat FAB
+const chatFab = document.getElementById('chatFab');
+const chatPanel = document.getElementById('chatPanel');
+const chatClose = document.getElementById('chatClose');
+const chatForm = document.getElementById('chatForm');
+const chatQ = document.getElementById('chatQ');
+const chatAnswer = document.getElementById('chatAnswer');
+
+chatFab.addEventListener('click', () => {
+  chatPanel.classList.toggle('open');
+  if (chatPanel.classList.contains('open')) chatQ.focus();
+});
+
+chatClose.addEventListener('click', () => {
+  chatPanel.classList.remove('open');
+});
+
+chatForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const q = chatQ.value.trim();
+  if (!q) return;
+  const btn = chatForm.querySelector('button');
+  btn.disabled = true;
+  chatAnswer.hidden = false;
+  chatAnswer.innerHTML = '<div class="mode">Thinking...</div><p>Loading...</p>';
+  try {
+    const res = await fetch('/ask?q=' + encodeURIComponent(q));
+    const data = await res.json();
+    let html = '<div class="mode">' + (data.mode || 'chat') + '</div>';
+    html += '<p>' + (data.answer || data.text || 'No answer').replace(/\n/g, '<br>') + '</p>';
+    if (data.sources && data.sources.length) {
+      html += '<div class="sources">';
+      for (const s of data.sources) {
+        html += '<a href="' + s.url + '" target="_blank">' + (s.title || s.url) + '</a>';
+      }
+      html += '</div>';
+    }
+    chatAnswer.innerHTML = html;
+  } catch (err) {
+    chatAnswer.innerHTML = '<p>Error: ' + err.message + '</p>';
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// ── Pemain video dalam tukuk.org ── Klik kad video → main terus dalam modal.
+function embedSrc(u) {
+  try {
+    const url = new URL(u);
+    const h = url.hostname.replace(/^www\./, '').toLowerCase();
+    let id = null;
+    if (h === 'youtube.com' || h === 'm.youtube.com' || h === 'youtube-nocookie.com') {
+      if (url.pathname === '/watch') id = url.searchParams.get('v');
+      else { const m = url.pathname.match(/^\/(?:shorts|embed|live)\/([\w-]{6,})/); if (m) id = m[1]; }
+    } else if (h === 'youtu.be') {
+      id = url.pathname.slice(1).split('/')[0];
+    } else if (h === 'vimeo.com') {
+      const m = url.pathname.match(/^\/(\d+)/); if (m) return `https://player.vimeo.com/video/${m[1]}`;
+    } else if (h === 'dailymotion.com' || h === 'dai.ly') {
+      const m = url.pathname.match(/^\/video\/([\w]+)/) || (h === 'dai.ly' ? url.pathname.match(/^\/([\w]+)/) : null);
+      if (m) return `https://www.dailymotion.com/embed/video/${m[1]}`;
+    }
+    if (id && /^[\w-]{6,}$/.test(id)) return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0`;
+  } catch { /* bukan URL sah */ }
+  return null;
+}
+let vLastFocus = null;
+function closeVideo() {
+  const m = document.getElementById('vmodal');
+  if (!m || m.hidden) return;
+  m.hidden = true;
+  document.getElementById('vmodal-frame').src = '';
+  document.body.style.overflow = '';
+  if (vLastFocus && document.contains(vLastFocus)) vLastFocus.focus();
+  vLastFocus = null;
+}
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a.video-card');
+  if (!a) return;
+  const src = embedSrc(a.href);
+  if (!src) return; // platform tak disokong → biar buka luar macam biasa
+  e.preventDefault();
+  document.getElementById('vmodal-title').textContent = (a.querySelector('h3') || {}).textContent || 'Video';
+  document.getElementById('vmodal-frame').src = src;
+  const lnk = document.getElementById('vmodal-link');
+  lnk.href = a.href;
+  const host = (() => { try { return new URL(a.href).hostname.replace(/^www\./, ''); } catch { return 'source'; } })();
+  lnk.textContent = `Open on ${host}`;
+  document.getElementById('vmodal').hidden = false;
+  document.body.style.overflow = 'hidden';
+  vLastFocus = a;
+  document.getElementById('vmodal-x').focus();
+});
+document.getElementById('vmodal-x').addEventListener('click', closeVideo);
+document.querySelector('#vmodal .vmodal-bd').addEventListener('click', closeVideo);
+document.addEventListener('keydown', (e) => {
+  const m = document.getElementById('vmodal');
+  if (!m || m.hidden) return;
+  if (e.key === 'Escape') { closeVideo(); return; }
+  if (e.key === 'Tab') {
+    const f = [document.getElementById('vmodal-x'), document.getElementById('vmodal-link')].filter(Boolean);
+    const i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+  }
+});
+
+const mediaAudio = document.getElementById('mediaAudio');
+const audioBar = document.getElementById('audioBar');
+const audioBarTitle = document.getElementById('audioBarTitle');
+let audioOwner = null;
+function stopAudio() {
+  mediaAudio.pause();
+  mediaAudio.removeAttribute('src');
+  if (audioOwner) {
+    audioOwner.textContent = '\u25b6';
+    audioOwner.setAttribute('aria-pressed', 'false');
+    audioOwner.classList.remove('playing');
+    audioOwner = null;
+  }
+  audioBar.hidden = true;
+}
+document.getElementById('audioBarStop').addEventListener('click', stopAudio);
+mediaAudio.addEventListener('error', () => { if (audioOwner && mediaAudio.getAttribute('src')) stopAudio(); });
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.play-btn');
+  if (!btn || !btn.dataset.audio) return;
+  e.preventDefault();
+  if (audioOwner === btn && !mediaAudio.paused) { stopAudio(); return; }
+  if (audioOwner && audioOwner !== btn) stopAudio();
+  mediaAudio.src = btn.dataset.audio;
+  mediaAudio.play().then(() => {
+    audioOwner = btn;
+    btn.textContent = '\u23f8';
+    btn.setAttribute('aria-pressed', 'true');
+    btn.classList.add('playing');
+    audioBarTitle.textContent = btn.dataset.title || '';
+    audioBar.hidden = false;
+  }).catch(() => { btn.textContent = '\u25b6'; audioBar.hidden = true; });
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

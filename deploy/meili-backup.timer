@@ -1,0 +1,10 @@
+[Unit]
+Description=Backup Meilisearch ke Cloudflare R2 setiap 6 jam
+
+[Timer]
+OnCalendar=*-*-* 00,06,12,18:15:00
+Persistent=true
+Unit=meili-backup.service
+
+[Install]
+WantedBy=timers.target

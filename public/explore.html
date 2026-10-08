@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explore — Science &amp; Geography Open Data | Tukuk-OS</title>
+<meta name="description" content="Live science and geography data: global earthquakes, countries and populations, weather forecasts, sunrise times and arXiv research papers. Powered by open, keyless APIs.">
+<link rel="canonical" href="https://tukuk.org/explore">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tukuk-OS">
+<meta property="og:title" content="Explore — Science &amp; Geography Open Data | Tukuk-OS">
+<meta property="og:description" content="Live science and geography data: global earthquakes, countries and populations, weather forecasts, sunrise times and arXiv research papers. Powered by open, keyless APIs.">
+<meta property="og:url" content="https://tukuk.org/explore">
+<meta property="og:image" content="https://tukuk.org/og.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Explore — Science &amp; Geography Open Data | Tukuk-OS">
+<meta name="twitter:description" content="Live science and geography data: global earthquakes, countries and populations, weather forecasts, sunrise times and arXiv research papers. Powered by open, keyless APIs.">
+<meta name="twitter:image" content="https://tukuk.org/og.png">
+
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#4c8dff">
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8954948214333501" crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-8954948214333501">
+<style>
+  :root { --bg:#0f1115; --panel:#171a21; --line:#262b36; --text:#e6e9ef; --muted:#9aa3b2; --accent:#4c8dff; --code-bg:#12151c; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .wrap { max-width:1040px; margin:0 auto; padding:0 20px; }
+  .site-nav { display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:16px 0; border-bottom:1px solid var(--line); font-size:.9rem; }
+  .site-nav .links { display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .site-nav .brand { font-weight:700; font-size:1.05rem; color:var(--text); margin-right:auto; }
+  .site-nav a.on { color:var(--accent); font-weight:600; }
+  .hero { padding:34px 0 8px; }
+  .hero h1 { margin:0 0 8px; font-size:2.1rem; letter-spacing:-.5px; }
+  .hero p { margin:0; color:var(--muted); max-width:70ch; }
+  .ad-slot { margin:20px 0; overflow:hidden; }
+
+  .tabs { display:flex; gap:8px; flex-wrap:wrap; margin:22px 0 18px; }
+  .tab { border:1px solid var(--line); background:var(--panel); color:var(--text);
+    border-radius:999px; padding:8px 16px; font-size:.9rem; cursor:pointer; }
+  .tab:hover { border-color:var(--accent); }
+  .tab.on { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+
+  .panel { display:none; }
+  .panel.on { display:block; }
+
+  .bar { display:flex; gap:10px; flex-wrap:wrap; margin:0 0 18px; }
+  .bar input[type="search"], .bar input[type="number"], .bar input[type="text"] {
+    flex:1 1 240px; min-width:0; padding:11px 14px; border:1px solid var(--line);
+    border-radius:10px; background:var(--panel); color:var(--text); font-size:.95rem; }
+  .bar input:focus { outline:none; border-color:var(--accent); }
+  .btn { padding:11px 18px; border:0; border-radius:10px; background:var(--accent);
+    color:#fff; font-weight:600; font-size:.95rem; cursor:pointer; }
+  .btn:hover { filter:brightness(1.08); }
+  .btn.ghost { background:transparent; border:1px solid var(--line); color:var(--text); }
+  .btn.ghost:hover { border-color:var(--accent); color:var(--accent); }
+
+  .grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .card h3 { margin:0 0 6px; font-size:1.02rem; }
+  .card .sub { color:var(--muted); font-size:.85rem; }
+  .kv { display:flex; justify-content:space-between; gap:10px; padding:5px 0; font-size:.88rem;
+    border-bottom:1px dashed var(--line); }
+  .kv:last-child { border-bottom:0; }
+  .kv b { font-weight:600; }
+  .kv span { color:var(--muted); text-align:right; }
+
+  .badge { display:inline-block; min-width:44px; text-align:center; padding:3px 9px; border-radius:8px;
+    font-weight:700; font-size:.9rem; color:#0b0d13; }
+  .m1 { background:#4cd964; } .m2 { background:#a3e635; } .m3 { background:#fbbf24; }
+  .m4 { background:#fb923c; } .m5 { background:#ff5555; color:#fff; }
+
+  .flag { width:100%; height:110px; object-fit:cover; border-radius:8px; background:var(--code-bg); margin-bottom:10px; }
+  .paper { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .paper h3 { margin:0 0 6px; font-size:1rem; line-height:1.4; }
+  .paper p { margin:6px 0; color:var(--muted); font-size:.9rem; }
+  .chip { display:inline-block; background:var(--code-bg); border:1px solid var(--line);
+    border-radius:999px; padding:2px 10px; font-size:.78rem; color:var(--muted); margin-right:6px; }
+
+  .stat { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
+  .stat div { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 16px; min-width:120px; }
+  .stat b { display:block; font-size:1.4rem; }
+  .stat span { color:var(--muted); font-size:.82rem; }
+
+  .forecast { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); }
+  .day { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px; text-align:center; }
+  .day b { display:block; font-size:1.05rem; margin:4px 0; }
+  .day span { color:var(--muted); font-size:.8rem; display:block; }
+
+  .empty { color:var(--muted); padding:26px; text-align:center; border:1px dashed var(--line);
+    border-radius:12px; }
+  .error { color:var(--danger, #ff5555); padding:14px; border:1px solid var(--danger, #ff5555);
+    border-radius:10px; margin-bottom:14px; }
+  .spin { display:inline-block; width:14px; height:14px; border:2px solid var(--line);
+    border-top-color:var(--accent); border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; }
+  @keyframes sp { to { transform:rotate(360deg); } }
+
+  footer { margin:48px 0 36px; padding-top:18px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:.85rem; text-align:center; }
+
+  @media (max-width:640px) {
+    .site-nav .links { font-size:.82rem; gap:10px; }
+    .hero h1 { font-size:1.6rem; }
+  }
+</style>
+<!-- Clarity tracking code for https://tukuk.org/ -->
+<script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ytshvg0zer");
+</script>
+<script async src="https://fundingchoicesmessages.google.com/i/pub-8954948214333501?ers=1"></script><script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
+<script src="/fc-error.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <nav class="site-nav">
+    <span class="brand">🌍 Tukuk<span style="color:var(--accent)">OS</span></span>
+    <span class="links">
+      <a href="/">Home</a>
+      <a href="/explore" class="on">Explore</a>
+      <a href="/nasa">NASA</a>
+      <a href="/blog">Blog</a>
+      <a href="/docs">Docs</a>
+      <a href="/about">About</a>
+      <a href="/privacy">Privacy</a>
+      <span class="theme-tools">
+        <button type="button" id="theme-toggle" class="tk-btn" aria-label="Colour theme">◐</button>
+        <span class="tk-accents" role="group" aria-label="Accent colour">
+          <button type="button" data-accent-set="blue" class="tk-dot" aria-label="Blue"></button>
+          <button type="button" data-accent-set="green" class="tk-dot" aria-label="Green"></button>
+          <button type="button" data-accent-set="violet" class="tk-dot" aria-label="Violet"></button>
+          <button type="button" data-accent-set="amber" class="tk-dot" aria-label="Amber"></button>
+          <button type="button" data-accent-set="rose" class="tk-dot" aria-label="Rose"></button>
+        </span>
+      </span>
+    </span>
+  </nav>
+
+  <header class="hero">
+    <h1>Explore science &amp; geography</h1>
+    <p>Live open data — earthquakes, countries, weather, sunrise times and research papers. Every source below is free and needs no API key.</p>
+  </header>
+
+  <div class="ad-slot"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8954948214333501" data-ad-slot="2206273113" data-ad-format="auto" data-full-width-responsive="true"></ins></div>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab on" data-tab="quakes">Earthquakes</button>
+    <button type="button" class="tab" data-tab="countries">Countries</button>
+    <button type="button" class="tab" data-tab="weather">Weather</button>
+    <button type="button" class="tab" data-tab="papers">Research</button>
+    <button type="button" class="tab" data-tab="sun">Sun &amp; Moon</button>
+    <button type="button" class="tab" data-tab="net">My network</button>
+  </div>
+
+  <main>
+    <div id="notice"></div>
+
+    <section class="panel on" id="panel-quakes">
+      <div class="bar">
+        <input type="number" id="quake-mag" min="0" max="10" step="0.5" placeholder="Minimum magnitude (e.g. 4.5)">
+        <button type="button" class="btn" id="quake-go">Load earthquakes</button>
+      </div>
+      <div class="stat" id="quake-stats" hidden></div>
+      <div class="grid" id="quake-list"></div>
+    </section>
+
+    <section class="panel" id="panel-countries">
+      <div class="bar">
+        <input type="search" id="country-q" placeholder="Search a country, capital or region…">
+        <button type="button" class="btn" id="country-go">Search</button>
+        <button type="button" class="btn ghost" id="country-all">Top 12 by population</button>
+      </div>
+      <div class="grid" id="country-list"></div>
+    </section>
+
+    <section class="panel" id="panel-weather">
+      <div class="bar">
+        <input type="search" id="wx-q" placeholder="Type a place name — e.g. Kuala Lumpur, Reykjavík, Nairobi">
+        <button type="button" class="btn" id="wx-go">Find place</button>
+      </div>
+      <div class="grid" id="wx-places" style="margin-bottom:16px"></div>
+      <div id="wx-out"></div>
+    </section>
+
+    <section class="panel" id="panel-papers">
+      <div class="bar">
+        <input type="search" id="paper-q" placeholder="Search arXiv — e.g. retrieval augmented generation">
+        <button type="button" class="btn" id="paper-go">Search papers</button>
+      </div>
+      <div id="paper-list"></div>
+    </section>
+
+    <section class="panel" id="panel-sun">
+      <div class="bar">
+        <input type="number" id="sun-lat" step="any" placeholder="Latitude (e.g. 3.139)">
+        <input type="number" id="sun-lon" step="any" placeholder="Longitude (e.g. 101.687)">
+        <button type="button" class="btn" id="sun-go">Get sunrise &amp; sunset</button>
+      </div>
+      <div id="sun-out"></div>
+    </section>
+
+    <section class="panel" id="panel-net">
+      <div class="bar">
+        <button type="button" class="btn" id="ip-go">Detect my location</button>
+      </div>
+      <div id="ip-out"></div>
+    </section>
+  </main>
+
+  <footer>
+    Data sources: USGS · World Bank · Open-Meteo · sunrise-sunset.org · arXiv · ipwho.is — all open and keyless.
+    <br>Tukuk-OS · <a href="/">search engine</a> · <a href="/docs">API documentation</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var notice = $('notice');
+
+  function say(message, isError) {
+    notice.innerHTML = message ? '<div class="' + (isError ? 'error' : 'empty') + '">' + message + '</div>' : '';
+  }
+  function busy(label) {
+    return '<div class="empty"><span class="spin"></span> ' + label + '</div>';
+  }
+  function esc(value) {
+    return String(value === null || value === undefined ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function api(path) {
+    return fetch(path).then(function (res) {
+      return res.json().then(function (body) {
+        if (!res.ok) throw new Error(body && body.error ? body.error : ('HTTP ' + res.status));
+        return body;
+      });
+    });
+  }
+  function number(value) {
+    if (value === null || value === undefined || value === '') return '—';
+    return Number(value).toLocaleString('en-US');
+  }
+
+  /* ---- tabs ---- */
+  document.querySelectorAll('.tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('on'); });
+      document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('on'); });
+      tab.classList.add('on');
+      $('panel-' + tab.dataset.tab).classList.add('on');
+      say('');
+    });
+  });
+
+  /* ---- earthquakes ---- */
+  function magClass(m) {
+    var v = Number(m) || 0;
+    if (v < 2) return 'm1';
+    if (v < 3) return 'm2';
+    if (v < 4.5) return 'm3';
+    if (v < 6) return 'm4';
+    return 'm5';
+  }
+
+  function loadQuakes() {
+    var mag = $('quake-mag').value;
+    var query = '/api/explore/earthquakes?limit=24' + (mag ? '&minmagnitude=' + encodeURIComponent(mag) : '');
+    $('quake-list').innerHTML = busy('Loading seismic activity…');
+    api(query).then(function (rows) {
+      if (!rows.length) {
+        $('quake-list').innerHTML = '<div class="empty">No earthquakes matched that filter.</div>';
+        $('quake-stats').hidden = true;
+        return;
+      }
+      var strongest = rows.reduce(function (a, b) { return (b.magnitude || 0) > (a.magnitude || 0) ? b : a; }, rows[0]);
+      $('quake-stats').hidden = false;
+      $('quake-stats').innerHTML =
+        '<div><b>' + rows.length + '</b><span>events (7 days)</span></div>' +
+        '<div><b>' + esc(strongest.magnitude) + '</b><span>strongest M</span></div>' +
+        '<div><b>' + esc(strongest.place ? String(strongest.place).split(' of ').pop() : '—') + '</b><span>strongest region</span></div>';
+
+      $('quake-list').innerHTML = rows.map(function (q) {
+        var when = q.time ? new Date(q.time) : null;
+        return '<article class="card">' +
+          '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
+            '<span class="badge ' + magClass(q.magnitude) + '">M ' + esc(q.magnitude) + '</span>' +
+            '<span class="sub">' + esc(when ? when.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '') + '</span>' +
+          '</div>' +
+          '<h3>' + esc(q.place || 'Unknown region') + '</h3>' +
+          '<div class="kv"><span>Depth</span><b>' + esc(q.depth) + ' km</b></div>' +
+          '<div class="kv"><span>Coordinates</span><b>' + esc(q.latitude) + ', ' + esc(q.longitude) + '</b></div>' +
+          '<div class="kv"><span>Tsunami flag</span><b>' + (q.tsunami ? 'yes' : 'no') + '</b></div>' +
+          (q.url ? '<p class="sub" style="margin:10px 0 0"><a href="' + esc(q.url) + '" target="_blank" rel="noopener">USGS detail →</a></p>' : '') +
+          '</article>';
+      }).join('');
+    }).catch(function (err) {
+      $('quake-list').innerHTML = '';
+      say(esc(err.message), true);
+    });
+  }
+
+  $('quake-go').addEventListener('click', loadQuakes);
+
+  /* ---- countries ---- */
+  function countryCard(c) {
+    return '<article class="card">' +
+      (c.flag ? '<img class="flag" loading="lazy" src="' + esc(c.flag) + '" alt="Flag of ' + esc(c.name) + '">' : '') +
+      '<h3>' + esc(c.emojiFlag) + ' ' + esc(c.name) + '</h3>' +
+      '<div class="kv"><span>Capital</span><b>' + esc(c.capital || '—') + '</b></div>' +
+      '<div class="kv"><span>Region</span><b>' + esc(c.region || '—') + '</b></div>' +
+      '<div class="kv"><span>Income</span><b>' + esc(c.incomeLevel || '—') + '</b></div>' +
+      '<div class="kv"><span>Population</span><b>' + number(c.population) + '</b></div>' +
+      '<p class="sub" style="margin:10px 0 0">' +
+        '<a href="#" data-lat="' + esc(c.latitude) + '" data-lon="' + esc(c.longitude) + '" data-place="' + esc(c.name) + '" class="wx-link">Weather here</a>' +
+      '</p>' +
+      '</article>';
+  }
+
+  function loadCountries(query) {
+    $('country-list').innerHTML = busy('Loading country data…');
+    api('/api/explore/countries?limit=12' + (query ? '&q=' + encodeURIComponent(query) : ''))
+      .then(function (rows) {
+        $('country-list').innerHTML = rows.length
+          ? rows.map(countryCard).join('')
+          : '<div class="empty">No country matched “' + esc(query) + '”.</div>';
+      })
+      .catch(function (err) { $('country-list').innerHTML = ''; say(esc(err.message), true); });
+  }
+
+  $('country-go').addEventListener('click', function () { loadCountries($('country-q').value.trim()); });
+  $('country-all').addEventListener('click', function () { $('country-q').value = ''; loadCountries(''); });
+  $('country-q').addEventListener('keydown', function (e) { if (e.key === 'Enter') loadCountries(this.value.trim()); });
+
+  /* ---- weather ---- */
+  function loadWeather(lat, lon, place) {
+    $('wx-out').innerHTML = busy('Loading forecast for ' + place + '…');
+    api('/api/explore/weather?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon) + '&days=5')
+      .then(function (data) {
+        var cur = data.current || {};
+        var unit = (data.units && data.units.temperature_2m) || '°C';
+        var windUnit = (data.units && data.units.wind_speed_10m) || 'km/h';
+        var days = (data.days || []).map(function (d) {
+          return '<div class="day">' +
+            '<span>' + esc(d.date ? new Date(d.date).toLocaleDateString('en-GB', { weekday: 'short' }) : '') + '</span>' +
+            '<b>' + esc(d.tempMax) + '° / ' + esc(d.tempMin) + '°</b>' +
+            '<span>' + esc(d.precipitationChance !== null && d.precipitationChance !== undefined ? d.precipitationChance + '% rain' : '') + '</span>' +
+            '</div>';
+        }).join('');
+
+        $('wx-out').innerHTML =
+          '<div class="stat">' +
+            '<div><b>' + esc(cur.temperature_2m) + unit + '</b><span>temperature now</span></div>' +
+            '<div><b>' + esc(cur.relative_humidity_2m) + '%</b><span>humidity</span></div>' +
+            '<div><b>' + esc(cur.wind_speed_10m) + ' ' + windUnit + '</b><span>wind</span></div>' +
+            '<div><b>' + esc(cur.pressure_msl) + '</b><span>hPa</span></div>' +
+            '<div><b>' + esc(data.timezone || '—') + '</b><span>timezone</span></div>' +
+          '</div>' +
+          '<div class="forecast">' + days + '</div>';
+      })
+      .catch(function (err) { $('wx-out').innerHTML = ''; say(esc(err.message), true); });
+  }
+
+  function findPlace() {
+    var q = $('wx-q').value.trim();
+    if (!q) return;
+    $('wx-places').innerHTML = busy('Searching places…');
+    api('/api/explore/geocode?q=' + encodeURIComponent(q) + '&limit=6')
+      .then(function (rows) {
+        if (!rows.length) {
+          $('wx-places').innerHTML = '<div class="empty">No place matched “' + esc(q) + '”.</div>';
+          return;
+        }
+        $('wx-places').innerHTML = rows.map(function (p) {
+          return '<article class="card">' +
+            '<h3>' + esc(p.name) + (p.country ? ', ' + esc(p.countryCode) : '') + '</h3>' +
+            '<div class="kv"><span>Region</span><b>' + esc(p.admin1 || '—') + '</b></div>' +
+            '<div class="kv"><span>Coordinates</span><b>' + esc(p.latitude) + ', ' + esc(p.longitude) + '</b></div>' +
+            '<div class="kv"><span>Population</span><b>' + number(p.population) + '</b></div>' +
+            '<p class="sub" style="margin:10px 0 0"><a href="#" class="wx-link" data-lat="' + esc(p.latitude) + '" data-lon="' + esc(p.longitude) + '" data-place="' + esc(p.name) + '">Show 5-day forecast</a></p>' +
+            '</article>';
+        }).join('');
+        loadWeather(rows[0].latitude, rows[0].longitude, rows[0].name);
+      })
+      .catch(function (err) { $('wx-places').innerHTML = ''; say(esc(err.message), true); });
+  }
+
+  $('wx-go').addEventListener('click', findPlace);
+  $('wx-q').addEventListener('keydown', function (e) { if (e.key === 'Enter') findPlace(); });
+
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest ? e.target.closest('.wx-link') : null;
+    if (!link) return;
+    e.preventDefault();
+    document.querySelector('[data-tab="weather"]').click();
+    loadWeather(link.dataset.lat, link.dataset.lon, link.dataset.place);
+  });
+
+  /* ---- papers ---- */
+  function loadPapers() {
+    var q = $('paper-q').value.trim();
+    if (!q) return;
+    $('paper-list').innerHTML = busy('Querying arXiv…');
+    api('/api/explore/arxiv?q=' + encodeURIComponent(q) + '&limit=6')
+      .then(function (rows) {
+        if (!rows.length) {
+          $('paper-list').innerHTML = '<div class="empty">No paper matched “' + esc(q) + '”.</div>';
+          return;
+        }
+        $('paper-list').innerHTML = rows.map(function (p) {
+          return '<article class="paper">' +
+            '<h3><a href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a></h3>' +
+            '<p><span class="chip">' + esc(p.category) + '</span>' +
+            '<span class="chip">' + esc(p.published ? p.published.slice(0, 10) : '') + '</span>' +
+            '<span class="chip">' + esc(p.authors.join(', ')) + '</span></p>' +
+            '<p>' + esc(p.summary) + '</p>' +
+            '<p><a href="' + esc(p.pdf) + '" target="_blank" rel="noopener">PDF →</a></p>' +
+            '</article>';
+        }).join('');
+      })
+      .catch(function (err) { $('paper-list').innerHTML = ''; say(esc(err.message), true); });
+  }
+
+  $('paper-go').addEventListener('click', loadPapers);
+  $('paper-q').addEventListener('keydown', function (e) { if (e.key === 'Enter') loadPapers(); });
+
+  /* ---- sun ---- */
+  function loadSun() {
+    var lat = $('sun-lat').value;
+    var lon = $('sun-lon').value;
+    if (lat === '' || lon === '') { say('Enter both latitude and longitude.', true); return; }
+    $('sun-out').innerHTML = busy('Calculating sun times…');
+    api('/api/explore/sun?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon))
+      .then(function (d) {
+        function t(value) { return value ? new Date(value).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '—'; }
+        $('sun-out').innerHTML =
+          '<div class="stat">' +
+            '<div><b>' + t(d.sunrise) + '</b><span>sunrise</span></div>' +
+            '<div><b>' + t(d.sunset) + '</b><span>sunset</span></div>' +
+            '<div><b>' + esc(d.date) + '</b><span>date</span></div>' +
+          '</div>' +
+          '<div class="card">' +
+            '<div class="kv"><span>Civil twilight begins</span><b>' + t(d.civilTwilightBegin) + '</b></div>' +
+            '<div class="kv"><span>Civil twilight ends</span><b>' + t(d.civilTwilightEnd) + '</b></div>' +
+            '<div class="kv"><span>Astronomical twilight begins</span><b>' + t(d.astronomicalTwilightBegin) + '</b></div>' +
+            '<div class="kv"><span>Astronomical twilight ends</span><b>' + t(d.astronomicalTwilightEnd) + '</b></div>' +
+            '<div class="kv"><span>Day length</span><b>' + esc(d.dayLength) + '</b></div>' +
+          '</div>';
+      })
+      .catch(function (err) { $('sun-out').innerHTML = ''; say(esc(err.message), true); });
+  }
+
+  $('sun-go').addEventListener('click', loadSun);
+
+  /* ---- network ---- */
+  $('ip-go').addEventListener('click', function () {
+    $('ip-out').innerHTML = busy('Looking up your network…');
+    api('/api/explore/ip')
+      .then(function (d) {
+        $('ip-out').innerHTML =
+          '<div class="stat">' +
+            '<div><b>' + esc(d.city || '—') + '</b><span>city</span></div>' +
+            '<div><b>' + esc(d.country || '—') + '</b><span>country</span></div>' +
+            '<div><b>' + esc(d.ip || '—') + '</b><span>public IP</span></div>' +
+          '</div>' +
+          '<div class="card">' +
+            '<div class="kv"><span>Region</span><b>' + esc(d.region || '—') + '</b></div>' +
+            '<div class="kv"><span>Coordinates</span><b>' + esc(d.latitude) + ', ' + esc(d.longitude) + '</b></div>' +
+            '<div class="kv"><span>Timezone</span><b>' + esc(d.timezone || '—') + '</b></div>' +
+            '<div class="kv"><span>Provider</span><b>' + esc(d.isp || '—') + '</b></div>' +
+            '<div class="kv"><span>ASN</span><b>' + esc(d.asn || '—') + '</b></div>' +
+          '</div>' +
+          '<p style="margin-top:14px"><a href="#" class="wx-link" data-lat="' + esc(d.latitude) + '" data-lon="' + esc(d.longitude) + '" data-place="' + esc(d.city || 'your location') + '">Weather for my location →</a></p>';
+      })
+      .catch(function (err) { $('ip-out').innerHTML = ''; say(esc(err.message), true); });
+  });
+
+  loadQuakes();
+  loadCountries('');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+{
+  "name": "tukuk-os",
+  "version": "2.1.0",
+  "description": "Tukuk-OS - enjin carian web berterasaskan Meilisearch + desktop app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "meili": "meilisearch --db-path ./meili_data --master-key $(grep '^MEILI_MASTER_KEY=' ~/.config/tukuk-os/env | cut -d= -f2-) --http-addr 127.0.0.1:7700",
+    "test": "node --test test/",
+    "desktop": "electron .",
+    "desktop:dev": "electron . --dev",
+    "desktop:no-sandbox": "electron . --no-sandbox",
+    "dist": "npm run dist:win && npm run dist:mac && npm run dist:linux",
+    "dist:win": "electron-builder --win --x64",
+    "dist:mac": "electron-builder --mac --x64 --arm64",
+    "dist:linux": "electron-builder --linux --x64 --arm64",
+    "dist:dir": "electron-builder --dir"
+  },
+  "keywords": [
+    "search",
+    "meilisearch",
+    "crawler",
+    "electron",
+    "desktop"
+  ],
+  "author": {
+    "name": "Tukuk-OS",
+    "email": "contact@tukuk.org"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.20.0",
+    "cheerio": "^1.2.0",
+    "compression": "^1.8.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "meilisearch": "^0.62.0"
+  },
+  "devDependencies": {
+    "electron": "^35.7.5",
+    "electron-builder": "^24.13.3",
+    "sharp": "^0.35.5"
+  },
+  "build": {
+    "appId": "org.tukuk.os",
+    "productName": "Tukuk-OS",
+    "copyright": "Copyright \u00a9 2026 Tukuk-OS",
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Tukuk-OS",
+      "installerIcon": "build/icon.png",
+      "uninstallerIcon": "build/icon.png",
+      "installerHeaderIcon": "build/icon.png",
+      "runAfterFinish": true
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icon.png",
+      "type": "distribution",
+      "asar": true,
+      "mergeASARs": true,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "entitlements": null,
+      "entitlementsInherit": null
+    },
+    "win": {
+      "icon": "build/icon.png",
+      "artifactName": "Tukuk-OS-Setup-${version}-${arch}.${ext}",
+      "verifyUpdateCodeSignature": false,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "artifactName": "Tukuk-OS-${version}-${arch}.${ext}",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "desktop": {
+        "Name": "Tukuk-OS",
+        "Comment": "Enjin carian web bebas",
+        "Categories": "Network;Search;"
+      }
+    },
+    "files": [
+      "index.js",
+      "desktop/**/*",
+      "src/**/*",
+      "public/**/*",
+      "package.json"
+    ],
+    "extraResources": [],
+    "asar": true,
+    "compression": "maximum",
+    "nodeGypRebuild": false
+  },
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  },
+  "homepage": "https://tukuk.org",
+  "maintainers": [
+    {
+      "name": "Tukuk-OS",
+      "email": "contact@tukuk.org"
+    }
+  ]
+}

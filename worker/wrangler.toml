@@ -1,0 +1,7 @@
+name = "tukuk-www-worker"
+main = "index.js"
+compatibility_date = "2026-10-08"
+
+routes = [
+  { pattern = "www.tukuk.org/*", zone_name = "tukuk.org" }
+]

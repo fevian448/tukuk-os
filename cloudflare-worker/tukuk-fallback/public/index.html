@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tukuk-OS — Enjin Carian Web</title>
+<meta name="description" content="Tukuk-OS ialah enjin carian web bebas yang mengindeks laman web dan menyediakan statistik. Cari dengan pantas dengan sorotan, penapis dan facet.">
+<meta name="keywords" content="enjin carian, search engine, carian web, tukuk, indeks terbalik, meilisearch">
+<link rel="canonical" href="/">
+<meta property="og:title" content="Tukuk-OS — Enjin Carian Web">
+<meta property="og:description" content="Enjin carian web bebas dengan sorotan, penapis dan facet.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128269;</text></svg>">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#4c8dff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tukuk-OS">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8954948214333501" crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-8954948214333501">
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --line: #262b36; --text: #e6e9ef;
+    --muted: #9aa3b2; --accent: #4c8dff; --mark: #ffd54a; --radius: 10px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f7f8fa; --panel:#fff; --line:#e3e6ec; --text:#151922; --muted:#5c6472; --accent:#1f6feb; --mark:#fff3a3; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 56px 0 24px; text-align:center; }
+  h1 { margin:0 0 6px; font-size:2.3rem; letter-spacing:-.5px; }
+  .tagline { color: var(--muted); margin:0 0 28px; }
+  form { display:flex; gap:10px; }
+  input[type=search] { flex:1; padding:14px 16px; font-size:1.05rem;
+    border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--panel); color:var(--text); }
+  input[type=search]:focus { outline:2px solid var(--accent); outline-offset:-1px; }
+  button { padding:14px 24px; font-size:1rem; font-weight:600; cursor:pointer;
+    border:0; border-radius:var(--radius); background:var(--accent); color:#fff; }
+  button:disabled { opacity:.5; cursor:progress; }
+  .meta { display:flex; flex-wrap:wrap; gap:14px; align-items:center;
+    margin:22px 0 8px; color:var(--muted); font-size:.9rem; }
+  select, .chip { padding:5px 10px; border:1px solid var(--line); border-radius:999px;
+    background:var(--panel); color:var(--text); font-size:.85rem; cursor:pointer; }
+  .facets { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px; }
+  .facets summary { cursor:pointer; color:var(--muted); font-size:.9rem; }
+  .facets-body { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .result { padding:18px 0; border-bottom:1px solid var(--line); }
+  .result h2 { margin:0 0 4px; font-size:1.15rem; font-weight:600; }
+  .result h2 a { color:var(--text); }
+  .url { color:var(--muted); font-size:.85rem; margin-bottom:6px; word-break:break-all; }
+  .snippet { margin:0; color:var(--text); }
+  mark { background:var(--mark); color:#111; padding:0 2px; border-radius:3px; }
+  .tags { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
+  .tags span { font-size:.75rem; color:var(--muted); border:1px solid var(--line);
+    padding:2px 8px; border-radius:999px; }
+  .empty { text-align:center; padding:60px 0; color:var(--muted); }
+  footer { margin:60px 0 40px; padding-top:24px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:.9rem; }
+  footer a { margin-right:16px; }
+  .suggest { position:relative; }
+  .suggest-list { position:absolute; z-index:10; left:0; right:130px; top:52px;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; box-shadow:0 12px 32px rgba(0,0,0,.28); }
+  .suggest-list div { padding:9px 16px; cursor:pointer; font-size:.93rem; }
+  .suggest-list div:hover, .suggest-list div.on { background:var(--accent); color:#fff; }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>&#128269; Tukuk-OS</h1>
+  <p class="tagline">Enjin carian web bebas &mdash; indeks terbalik, sorotan kata, penapis facet</p>
+  <form id="form" autocomplete="off">
+    <div class="suggest" style="flex:1">
+      <input type="search" id="q" name="q" placeholder="Cari di web&hellip;" aria-label="Kata kunci carian" required>
+      <div class="suggest-list" id="suggest" hidden></div>
+    </div>
+    <button type="submit" id="go">Cari</button>
+  </form>
+  <div class="tabs" id="tabs">
+    <button type="button" data-mode="web" class="on">Web</button>
+    <button type="button" data-mode="images">Imej</button>
+    <button type="button" data-mode="videos">Video</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="meta" id="meta" hidden>
+    <span id="count"></span>
+    <span id="took"></span>
+    <select id="sort" aria-label="Susun hasil">
+      <option value="">Relevans</option>
+      <option value="newest">Terbaharu</option>
+      <option value="longest">Terpanjang</option>
+      <option value="shortest">Terpendek</option>
+    </select>
+  </div>
+  <details class="facets" id="facetBox" hidden><summary>Tapik hasil</summary><div class="facets-body" id="facets"></div></details>
+  <section id="results" aria-live="polite"></section>
+</main>
+
+<footer class="wrap">
+  <a href="/health">Health</a>
+  <a href="/stats">Statistik</a>
+  <a href="/api">API</a>
+  <p style="margin-top:14px">Tukuk-OS &middot; dibina dengan Meilisearch &middot; kod sumber terbuka (ISC)</p>
+</footer>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
+  ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+let offset = 0, query = '', busy = false, timer = null, mode = 'web';
+
+function readURL() {
+  const p = new URLSearchParams(location.search);
+  $('q').value = p.get('q') || '';
+  mode = p.get('mode') || 'web';
+  setMode(mode, false);
+  query = $('q').value.trim();
+  offset = Number(p.get('offset') || 0);
+  return query;
+}
+
+function setMode(m, push = true) {
+  mode = m;
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.classList.toggle('on', b.dataset.mode === m);
+  });
+  $('sort').hidden = m !== 'web';
+  $('facetBox').hidden = true;
+  if (push) {
+    const p = new URLSearchParams();
+    if (query) p.set('q', query);
+    p.set('mode', m);
+    history.replaceState(null, '', `/?${p}`);
+  }
+}
+
+function pushURL(extra = {}) {
+  const p = new URLSearchParams();
+  if (query) p.set('q', query);
+  p.set('mode', mode);
+  const s = $('sort').value;
+  if (s) p.set('sort', s);
+  const o = offset + (extra.offset || 0);
+  if (o) p.set('offset', o);
+  history.replaceState(null, '', `/?${p}`);
+}
+
+async function run(append = false) {
+  if (!query || busy) return;
+  busy = true; $('go').disabled = true;
+  if (!append) { $('results').innerHTML = '<p class="empty">Mencari&hellip;</p>'; }
+
+  if (mode === 'web') {
+    const p = new URLSearchParams({ q: query, limit: '20', offset: String(offset) });
+    const s = $('sort').value;
+    if (s) p.set('sort', s);
+    try {
+      const r = await fetch('/search?' + p);
+      const d = await r.json();
+
+      $('meta').hidden = false;
+      $('count').textContent = `${d.total ?? 0} hasil`;
+      $('took').textContent = `${d.tookMs ?? 0} ms`;
+
+      const facetNames = { host: 'Laman', lang: 'Bahasa', type: 'Jenis' };
+      const entries = Object.entries(d.facets || {}).filter(([, v]) => Object.keys(v).length);
+      if (entries.length) {
+        $('facetBox').hidden = false;
+        $('facets').innerHTML = entries.map(([name, values]) =>
+          Object.entries(values).slice(0, 8).map(([val, n]) =>
+            `<button type="button" class="chip" data-f="${name}" data-v="${esc(val)}">
+               ${esc(facetNames[name] || name)}: ${esc(val)} (${n})
+             </button>`).join('')
+        ).join('');
+      }
+
+      if (!d.hits.length) {
+        $('results').innerHTML = `<p class="empty">Tiada hasil untuk &ldquo;${esc(query)}&rdquo;.</p>`;
+      } else {
+        const html = d.hits.map((h) => `
+          <article class="result">
+            <h2><a href="${esc(h.url)}" rel="noopener noreferrer nofollow">${esc(h.title)}</a></h2>
+            <div class="url">${esc(h.siteName || h.host)} &middot; ${esc(h.title)}</div>
+            <p class="snippet">${h.snippet || esc(h.description)}</p>
+            <div class="tags">
+              ${h.lang ? `<span>${esc(h.lang)}</span>` : ''}
+              ${h.type ? `<span>${esc(h.type)}</span>` : ''}
+              ${h.wordCount ? `<span>${h.wordCount} perkataan</span>` : ''}
+            </div>
+          </article>`).join('');
+        $('results').insertAdjacentHTML(append ? 'beforeend' : 'afterbegin', html);
+
+        const next = offset + d.hits.length;
+        const more = document.getElementById('more');
+        if (next < (d.total ?? 0)) {
+          if (more) more.remove();
+          const b = document.createElement('button');
+          b.id = 'more'; b.type = 'button'; b.textContent = `Muat lagi (${next} / ${d.total})`;
+          b.onclick = () => { offset = next; pushURL(); run(true); };
+          $('results').append(b);
+        } else if (more) more.remove();
+      }
+    } catch (e) {
+      $('results').innerHTML = `<p class="empty">Ralat: ${esc(e.message)}</p>`;
+    } finally {
+      busy = false; $('go').disabled = false;
+    }
+    return;
+  }
+
+  const endpoint = mode === 'images' ? '/images' : '/videos';
+  const p = new URLSearchParams({ q: query, limit: '30', offset: String(offset) });
+  try {
+    const r = await fetch(endpoint + '?' + p);
+    const d = await r.json();
+
+    $('meta').hidden = false;
+    $('count').textContent = `${d.total ?? 0} hasil`;
+    $('took').textContent = `${d.tookMs ?? 0} ms`;
+    $('facetBox').hidden = true;
+
+    if (!d.hits?.length) {
+      $('results').innerHTML = `<p class="empty">Tiada hasil untuk &ldquo;${esc(query)}&rdquo;.</p>`;
+    } else {
+      if (mode === 'images') {
+        const html = '<div class="image-grid">' + d.hits.map((h) => `
+          <div class="image-card">
+            <a href="${esc(h.url)}" rel="noopener noreferrer nofollow" target="_blank">
+              <img src="${esc(h.thumbnail || h.url)}" alt="${esc(h.title || query)}" loading="lazy">
+            </a>
+            <div class="caption">
+              <a href="${esc(h.url)}" rel="noopener noreferrer nofollow" target="_blank">${esc(h.title || 'Imej')}</a>
+              ${h.description ? `<div style="color:var(--muted);font-size:.8rem;margin-top:4px">${esc(h.description.slice(0,80))}</div>` : ''}
+            </div>
+          </div>`).join('') + '</div>';
+        $('results').innerHTML = html;
+      } else {
+        const html = '<div class="video-list">' + d.hits.map((h) => `
+          <div class="video-item">
+            <div class="thumb">&#127909;</div>
+            <div class="info">
+              <a href="${esc(h.url)}" rel="noopener noreferrer nofollow" target="_blank">${esc(h.title || 'Video')}</a>
+              <p>${esc(h.description || '')}</p>
+            </div>
+          </div>`).join('') + '</div>';
+        $('results').innerHTML = html;
+      }
+    }
+  } catch (e) {
+    $('results').innerHTML = `<p class="empty">Ralat: ${esc(e.message)}</p>`;
+  } finally {
+    busy = false; $('go').disabled = false;
+  }
+}
+
+$('form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  query = $('q').value.trim();
+  offset = 0;
+  if (query) { pushURL(); run(); }
+});
+
+$('sort').addEventListener('change', () => { offset = 0; pushURL(); run(); });
+
+$('facets').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  const p = new URLSearchParams({ q: query, limit: '20', offset: '0', mode });
+  p.set(chip.dataset.f, chip.dataset.v);
+  history.replaceState(null, '', `/?${p}`);
+  $('q').value = query; offset = 0;
+  run();
+});
+
+document.querySelectorAll('#tabs button').forEach((btn) => {
+  btn.addEventListener('click', () => { offset = 0; setMode(btn.dataset.mode); run(); });
+});
+
+$('q').addEventListener('input', () => {
+  clearTimeout(timer);
+  const v = $('q').value.trim();
+  if (v.length < 2) { $('suggest').hidden = true; return; }
+  timer = setTimeout(async () => {
+    try {
+      const d = await (await fetch('/suggest?q=' + encodeURIComponent(v))).json();
+      const list = $('suggest');
+      if (!d.suggestions?.length) { list.hidden = true; return; }
+      list.innerHTML = d.suggestions
+        .map((s) => `<div>${s.title}</div>`).join('');
+      list.hidden = false;
+    } catch { /* abaikan */ }
+  }, 180);
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.suggest')) $('suggest').hidden = true;
+});
+
+query = readURL();
+if (query) run();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

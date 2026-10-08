@@ -1,0 +1,9 @@
+[Unit]
+Description=Watchdog Tukuk-OS — pastikan enjin carian responsif
+After=tukuk-os.service meilisearch.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/tukuk/tukuk-os
+EnvironmentFile=-/home/tukuk/.config/tukuk-os/env
+ExecStart=/home/tukuk/tukuk-os/scripts/watchdog.sh

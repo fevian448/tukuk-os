@@ -1,0 +1,41 @@
+{
+  "name": "tukuk-fallback",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-06",
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "r2_buckets": [
+    {
+      "binding": "FALLBACK_BUCKET",
+      "bucket_name": "tukuk-fallback",
+      "preview_bucket_name": "tukuk-fallback-preview"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tukuk-os-db",
+      "database_id": "86729e04-c708-425e-bb70-78e9b419627e"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "6b4121f83fc04c8daf5df901cc2816ae"
+    }
+  ],
+  "vectorize": [
+    {
+      "binding": "VECTORIZE",
+      "index_name": "tukuk-os-vectors"
+    }
+  ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "tukuk-os_engine",
+      "dataset": "tukuk-os_data-analytics"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

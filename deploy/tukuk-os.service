@@ -1,0 +1,39 @@
+[Unit]
+Description=Tukuk-OS enjin carian (Express + Meilisearch)
+Documentation=https://github.com/meilisearch/meilisearch
+After=network-online.target meilisearch.service
+Wants=network-online.target meilisearch.service
+# BUKAN Requires/PartOf — jika Meilisearch mati, enjin carian MESTI tetap hidup
+# untuk boleh memberi jawapan daripada cache fallback (lihat src/fallback.js).
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=/home/tukuk/tukuk-os
+EnvironmentFile=/home/tukuk/.config/tukuk-os/env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node index.js
+
+# --- Jangan pernah mati kekal ---
+Restart=always
+RestartSec=3
+# Hadkan penggunaan memori supaya OOM killer tidak bunuh servis
+MemoryMax=1G
+TasksMax=512
+
+# Paksa restart selepas isyarat yang tidak干净的
+RestartForceExitStatus=SIGABRT
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tukuk-os
+
+# --- hardening (tidak menghalang fungsi) ---
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/tukuk/tukuk-os/meili_data /home/tukuk/tukuk-os/snapshots /home/tukuk/tukuk-os/dumps
+
+[Install]
+WantedBy=default.target

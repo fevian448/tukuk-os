@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NASA Explorer &mdash; Space Data &amp; Astronomy Hub | Tukuk-OS</title>
+<meta name="description" content="Explore outer space with real-time NASA open data: 3D Interactive ISS Space Station Globe, Astronomy Picture of the Day (APOD), Mars Rover surface imagery, Near-Earth Asteroid radar, EPIC Earth view, Sounds of Space, and Media Archives.">
+<link rel="canonical" href="https://tukuk.org/nasa">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tukuk-OS">
+<meta property="og:title" content="NASA Explorer &mdash; Space Data &amp; Astronomy Hub | Tukuk-OS">
+<meta property="og:description" content="Explore outer space with real-time NASA open data: 3D Interactive ISS Space Station Globe, Astronomy Picture of the Day (APOD), Mars Rover surface imagery, Near-Earth Asteroid radar, EPIC Earth view, Sounds of Space, and Media Archives.">
+<meta property="og:url" content="https://tukuk.org/nasa">
+<meta property="og:image" content="https://tukuk.org/og.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NASA Explorer &mdash; Space Data &amp; Astronomy Hub | Tukuk-OS">
+<meta name="twitter:description" content="Explore outer space with real-time NASA open data: 3D Interactive ISS Space Station Globe, Astronomy Picture of the Day (APOD), Mars Rover surface imagery, Near-Earth Asteroid radar, EPIC Earth view, Sounds of Space, and Media Archives.">
+<meta name="twitter:image" content="https://tukuk.org/og.png">
+
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#4c8dff">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8954948214333501" crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-8954948214333501">
+<style>
+  :root {
+    --bg: #0b0d13; --panel: #131722; --card: #181d2a; --line: #242c3e;
+    --text: #e6e9ef; --muted: #9aa3b2; --accent: #4c8dff; --accent-glow: rgba(76,141,255,0.2);
+    --gold: #ffd54a; --danger: #ff5555; --success: #4cd964; --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
+  
+  /* Top Nav */
+  .site-nav { display:flex; justify-content:space-between; align-items:center; padding:18px 0; border-bottom:1px solid var(--line); font-size:.92rem; }
+  .site-nav .links { display:flex; gap:16px; flex-wrap:wrap; }
+  .site-nav .brand { font-weight:700; font-size:1.1rem; color:var(--text); }
+  
+  /* Hero */
+  .hero { text-align:center; padding:40px 0 24px; }
+  .hero h1 { font-size:2.4rem; margin:0 0 10px; letter-spacing:-.5px; background:linear-gradient(135deg, #fff 30%, var(--accent) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p { color:var(--muted); font-size:1.1rem; max-width:680px; margin:0 auto; }
+  
+  /* Tabs */
+  .tab-bar { display:flex; gap:8px; overflow-x:auto; padding:12px 0 24px; justify-content:center; flex-wrap:wrap; }
+  .tab-btn { padding:10px 18px; border-radius:999px; border:1px solid var(--line); background:var(--panel); color:var(--muted); font-size:.92rem; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap; }
+  .tab-btn:hover { border-color:var(--accent); color:var(--text); }
+  .tab-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 0 16px var(--accent-glow); }
+  
+  /* Sections */
+  .section-panel { display:none; padding-bottom:60px; }
+  .section-panel.active { display:block; animation:fadeIn .3s ease-in-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  
+  /* Cards & Grid */
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-bottom:24px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px; }
+  .grid-2 { display:grid; grid-template-columns:repeat(auto-fill, minmax(440px, 1fr)); gap:24px; }
+  
+  /* APOD */
+  .apod-media { width:100%; max-height:560px; object-fit:contain; background:#000; border-radius:var(--radius); margin-bottom:18px; display:block; }
+  .apod-title { font-size:1.6rem; margin:0 0 8px; }
+  .apod-meta { color:var(--muted); font-size:.9rem; margin-bottom:14px; }
+  .apod-desc { line-height:1.8; color:var(--text); }
+  .apod-controls { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+  
+  /* ISS 3D & 2D Tracker */
+  .iss-view-container { position:relative; width:100%; height:480px; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); background:#05070c; margin-top:18px; }
+  #iss3dCanvas { width:100%; height:100%; display:block; cursor:grab; }
+  #iss3dCanvas:active { cursor:grabbing; }
+  #issMap { width:100%; height:100%; display:none; }
+  
+  .mode-switch { position:absolute; top:14px; right:14px; z-index:10; display:flex; gap:6px; background:rgba(19,23,34,0.85); backdrop-filter:blur(8px); padding:4px; border-radius:999px; border:1px solid var(--line); }
+  .mode-btn { padding:6px 14px; border-radius:999px; font-size:.82rem; font-weight:600; border:0; background:transparent; color:var(--muted); cursor:pointer; }
+  .mode-btn.active { background:var(--accent); color:#fff; }
+  
+  .telemetry-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 18px; }
+  .telemetry-box { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px; text-align: center; }
+  .telemetry-val { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+  .telemetry-label { font-size: 0.82rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Audio Cards */
+  .audio-card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px; display:flex; flex-direction:column; justify-content:space-between; }
+  .audio-card audio { width:100%; margin-top:14px; }
+
+  /* Forms & Buttons */
+  input, select { padding:9px 14px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--text); font-size:.95rem; outline:none; }
+  input:focus, select:focus { border-color:var(--accent); }
+  .btn { padding:9px 18px; border-radius:8px; border:0; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; font-size:.92rem; }
+  .btn:hover { opacity:.9; }
+  .btn-secondary { background:var(--card); color:var(--text); border:1px solid var(--line); }
+  
+  /* Photos */
+  .photo-card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; }
+  .photo-card img { width:100%; height:220px; object-fit:cover; background:#05070a; transition:transform .3s; }
+  .photo-card:hover img { transform:scale(1.03); }
+  .photo-card-body { padding:14px; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+  .photo-card-title { font-size:1rem; font-weight:600; margin:0 0 6px; }
+  .photo-card-meta { font-size:.82rem; color:var(--muted); }
+  
+  /* Asteroid Table */
+  table { width:100%; border-collapse:collapse; margin-top:14px; font-size:.92rem; }
+  th, td { padding:12px 14px; text-align:left; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; background:var(--card); }
+  .badge { display:inline-block; padding:3px 8px; border-radius:999px; font-size:.78rem; font-weight:700; }
+  .badge-danger { background:rgba(255,85,85,0.15); color:var(--danger); border:1px solid var(--danger); }
+  .badge-safe { background:rgba(76,217,100,0.15); color:var(--success); border:1px solid var(--success); }
+  
+  /* Loader */
+  .spinner { text-align:center; padding:40px; color:var(--muted); font-size:1.1rem; }
+  
+  /* Footer */
+  footer { margin-top:60px; padding:36px 0; border-top:1px solid var(--line); color:var(--muted); font-size:.88rem; text-align:center; }
+  
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.8rem; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .iss-view-container { height:360px; }
+  }
+
+  .ad-slot{margin:24px 0;overflow:hidden;}
+</style>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme.css">
+<!-- Clarity tracking code for https://tukuk.org/ -->
+<script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ytshvg0zer");
+</script>
+<script async src="https://fundingchoicesmessages.google.com/i/pub-8954948214333501?ers=1"></script><script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
+<script src="/fc-error.js"></script>
+</head>
+<body>
+
+    
+
+<div class="wrap">
+  <nav class="site-nav">
+    <div class="brand"><img src="logo-mark.svg" alt="" style="height:1.15em;vertical-align:-0.15em"> Tukuk-OS <span style="color:var(--accent); font-size:.85rem; font-weight:normal;">/ NASA Explorer</span></div>
+    <div class="links">
+      <a href="/">Home</a>
+      <a href="/explore">Explore</a>
+      <a href="/nasa">NASA</a>
+      <a href="/blog">Blog</a>
+      <a href="/docs">Docs</a>
+      <a href="/about">About</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Contact</a>
+      <span class="theme-tools">
+        <button type="button" id="theme-toggle" class="tk-btn" aria-label="Colour theme">◐</button>
+        <span class="tk-accents" role="group" aria-label="Accent colour">
+          <button type="button" data-accent-set="blue" class="tk-dot" aria-label="Blue"></button>
+          <button type="button" data-accent-set="green" class="tk-dot" aria-label="Green"></button>
+          <button type="button" data-accent-set="violet" class="tk-dot" aria-label="Violet"></button>
+          <button type="button" data-accent-set="amber" class="tk-dot" aria-label="Amber"></button>
+          <button type="button" data-accent-set="rose" class="tk-dot" aria-label="Rose"></button>
+        </span>
+      </span>
+    </div>
+  </nav>
+
+<div class="ad-slot"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8954948214333501" data-ad-slot="2206273113" data-ad-format="auto" data-full-width-responsive="true"></ins></div>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  <div class="hero">
+    <h1>NASA Space &amp; Astronomy Explorer</h1>
+    <p>Discover outer space through official NASA open data &mdash; interactive space experiments, 3D Interactive Live ISS Globe, Astronomy Picture of the Day, Mars Exploration, Asteroid Radar &amp; Space Audio.</p>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('apod')">&#127775; Astronomy Picture (APOD)</button>
+    <button class="tab-btn" onclick="switchTab('experiments')">&#129514; Experiments</button>
+    <button class="tab-btn" onclick="switchTab('iss')">&#128752; 3D Live ISS Tracker</button>
+    <button class="tab-btn" onclick="switchTab('mars')">&#129680; Mars Rovers</button>
+    <button class="tab-btn" onclick="switchTab('asteroids')">&#9732;&#65039; Near-Earth Asteroids</button>
+    <button class="tab-btn" onclick="switchTab('epic')">&#127757; EPIC Live Earth</button>
+    <button class="tab-btn" onclick="switchTab('audio')">&#127911; Sounds of Space</button>
+    <button class="tab-btn" onclick="switchTab('search')">&#128640; Media Search</button>
+    <button class="tab-btn" onclick="switchTab('history')">&#128214; NASA History</button>
+    <button class="tab-btn" onclick="switchTab('topics')">&#128752; Missions &amp; Topics</button>
+  </div>
+
+  <!-- 1. APOD PANEL -->
+  <div id="panel-apod" class="section-panel active">
+    <div class="card">
+      <div class="apod-controls">
+        <label for="apodDate" style="font-size:.9rem; color:var(--muted);">Select Date:</label>
+        <input type="date" id="apodDate" min="1995-06-16" max="">
+        <button class="btn" onclick="loadAPOD()">View Date</button>
+        <button class="btn btn-secondary" onclick="loadRandomAPOD()">🎲 Random Picture</button>
+      </div>
+      <div id="apodContent" class="spinner">Loading NASA APOD...</div>
+    </div>
+  </div>
+
+  <!-- 2. EXPERIMENTS PANEL -->
+  <div id="panel-experiments" class="section-panel">
+    <div class="card">
+      <h2 style="margin-top:0;">&#129514; NASA Experiments Lab</h2>
+      <p style="color:var(--muted);">Run live experiments against official NASA open data. Every experiment states a hypothesis, collects real measurements from NeoWs, DONKI and live ISS telemetry, then shows the result as a chart &mdash; no simulations, only data.</p>
+      <div class="telemetry-grid" style="margin-top:16px;">
+        <div class="telemetry-box"><div class="telemetry-label">Data source</div><div class="telemetry-val" style="font-size:1.05rem;">NASA NeoWs &middot; NOAA SWPC</div></div>
+        <div class="telemetry-box"><div class="telemetry-label">Refresh</div><div class="telemetry-val" style="font-size:1.05rem;">6-hour cache</div></div>
+        <div class="telemetry-box"><div class="telemetry-label">Runs this session</div><div class="telemetry-val" id="expRuns" style="font-size:1.05rem;">0</div></div>
+      </div>
+    </div>
+
+    <!-- Eksperimen 1: trend asteroid -->
+    <div class="card">
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between;">
+        <div style="flex:1; min-width:280px;">
+          <h3 style="margin:0 0 6px;">Experiment 1 &mdash; Are asteroids getting closer?</h3>
+          <p style="margin:0; color:var(--muted); font-size:.92rem;">Hypothesis: the number of close approaches is climbing. We count every object NeoWs returns for the last N weeks, split the window in half and compare.</p>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="expWeeks" aria-label="Weeks">
+            <option value="4" selected>4 weeks</option>
+            <option value="6">6 weeks</option>
+            <option value="8">8 weeks</option>
+          </select>
+          <button class="btn" onclick="runAsteroidTrend()">Run</button>
+        </div>
+      </div>
+      <div id="expTrendOut" class="spinner">Press <strong>Run</strong> to collect NASA measurements&hellip;</div>
+    </div>
+
+    <!-- Eksperimen 2: aktiviti matahari -->
+    <div class="card">
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between;">
+        <div style="flex:1; min-width:280px;">
+          <h3 style="margin:0 0 6px;">Experiment 2 &mdash; How active is the Sun right now?</h3>
+          <p style="margin:0; color:var(--muted); font-size:.92rem;">Hypothesis: solar activity arrives in clusters. We read NOAA GOES X-ray flares from the last 7 days, plus the F10.7 radio-flux trend over the window you pick.</p>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="expDays" aria-label="Flux window">
+            <option value="14">14-day flux</option>
+            <option value="30" selected>30-day flux</option>
+            <option value="42">42-day flux</option>
+          </select>
+          <button class="btn" onclick="runSolarActivity()">Run</button>
+        </div>
+      </div>
+      <div id="expSolarOut" class="spinner">Press <strong>Run</strong> to collect DONKI measurements&hellip;</div>
+    </div>
+
+    <!-- Eksperimen 3: matematik orbit ISS -->
+    <div class="card">
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between;">
+        <div style="flex:1; min-width:280px;">
+          <h3 style="margin:0 0 6px;">Experiment 3 &mdash; The ISS orbital calculator</h3>
+          <p style="margin:0; color:var(--muted); font-size:.92rem;">Hypothesis: Kepler&rsquo;s laws predict the orbit period from altitude alone. We take the live altitude, compute the period, then check it against how many orbits the station has really flown since 1998.</p>
+        </div>
+        <button class="btn" onclick="runIssMath()">Run</button>
+      </div>
+      <div id="expIssOut" class="spinner">Press <strong>Run</strong> to read live ISS telemetry&hellip;</div>
+    </div>
+  </div>
+
+  <!-- 3. LIVE ISS TRACKER PANEL (3D GLOBE + 2D MAP) -->
+  <div id="panel-iss" class="section-panel">
+    <div class="card">
+      <h2 style="margin-top:0;">International Space Station (ISS) 3D Live Orbit Tracker</h2>
+      <p style="color:var(--muted);">Live 3D telemetry of the Space Station orbiting Earth at ~27,600 km/h (~420 km altitude). Drag to rotate 3D Earth, scroll to zoom.</p>
+      
+      <div class="telemetry-grid">
+        <div class="telemetry-box">
+          <div class="telemetry-label">Latitude</div>
+          <div class="telemetry-val" id="issLat">--</div>
+        </div>
+        <div class="telemetry-box">
+          <div class="telemetry-label">Longitude</div>
+          <div class="telemetry-val" id="issLon">--</div>
+        </div>
+        <div class="telemetry-box">
+          <div class="telemetry-label">Velocity</div>
+          <div class="telemetry-val" id="issSpeed">-- km/h</div>
+        </div>
+        <div class="telemetry-box">
+          <div class="telemetry-label">Altitude</div>
+          <div class="telemetry-val" id="issAlt">-- km</div>
+        </div>
+      </div>
+
+      <div class="iss-view-container">
+        <div class="mode-switch">
+          <button class="mode-btn active" id="btn3d" onclick="setISSView('3d')">🌍 3D Globe</button>
+          <button class="mode-btn" id="btn2d" onclick="setISSView('2d')">🗺️ 2D Radar</button>
+        </div>
+        <div id="iss3dContainer" style="width:100%; height:100%;">
+          <canvas id="iss3dCanvas"></canvas>
+        </div>
+        <div id="issMap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MARS ROVER PANEL -->
+  <div id="panel-mars" class="section-panel">
+    <div class="card">
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px;">
+        <label for="marsRover" style="font-size:.9rem; color:var(--muted);">Select Rover:</label>
+        <select id="marsRover">
+          <option value="curiosity" selected>Curiosity</option>
+          <option value="perseverance">Perseverance</option>
+          <option value="opportunity">Opportunity</option>
+          <option value="spirit">Spirit</option>
+        </select>
+        <button class="btn" onclick="loadMarsPhotos()">Load Mars Photos</button>
+      </div>
+      <div id="marsContent" class="grid-3"></div>
+    </div>
+  </div>
+
+  <!-- 4. ASTEROID PANEL -->
+  <div id="panel-asteroids" class="section-panel">
+    <div class="card">
+      <h2 style="margin-top:0;">Near-Earth Asteroid Radar (NeoWs)</h2>
+      <p style="color:var(--muted);">Live telemetry of asteroids approaching Earth's orbital vicinity, speed in km/h, miss distance, and hazard assessment.</p>
+      <div id="asteroidContent" class="spinner">Scanning NASA asteroid radar...</div>
+    </div>
+  </div>
+
+  <!-- 5. EPIC PANEL -->
+  <div id="panel-epic" class="section-panel">
+    <div class="card">
+      <h2 style="margin-top:0;">Planet Earth Full-Disc Imagery (DSCOVR EPIC)</h2>
+      <p style="color:var(--muted);">High-resolution true color photographs of Earth captured from 1 million miles away by the NOAA DSCOVR spacecraft.</p>
+      <div id="epicContent" class="grid-3"></div>
+    </div>
+  </div>
+
+  <!-- 6. SOUNDS OF SPACE PANEL -->
+  <div id="panel-audio" class="section-panel">
+    <div class="card">
+      <h2 style="margin-top:0;">Sounds of Space &amp; Historic NASA Audio</h2>
+      <p style="color:var(--muted);">Listen to historic Apollo astronaut transmissions, rocket booster liftoffs, pulsar radio signals, and interstellar plasma waves.</p>
+      <form onsubmit="loadSpaceAudio(event)" style="display:flex; gap:10px; margin-bottom:24px;">
+        <input type="search" id="audioQuery" placeholder="e.g. Apollo, Voyager, Shuttle, Rocket, Jupiter..." style="flex:1;" value="Apollo">
+        <button type="submit" class="btn">Search Audio</button>
+      </form>
+      <div id="audioContent" class="grid-3"></div>
+    </div>
+  </div>
+
+  <!-- 7. NASA MEDIA SEARCH PANEL -->
+  <div id="panel-search" class="section-panel">
+    <div class="card">
+      <h2 style="margin-top:0;">Search NASA Photo &amp; Video Archives</h2>
+      <form onsubmit="searchNASA(event)" style="display:flex; gap:10px; margin-bottom:24px;">
+        <input type="search" id="nasaQuery" placeholder="e.g. James Webb, Apollo 11, Black Hole, Jupiter, Moon..." style="flex:1;" required>
+        <button type="submit" class="btn">Search NASA</button>
+      </form>
+      <div id="searchContent" class="grid-3"></div>
+    </div>
+  </div>
+
+  <!-- 8. NASA HISTORY PANEL -->
+  <div id="panel-history" class="section-panel">
+    <div class="card">
+      <h2 style="margin-top:0;">NASA History &mdash; Timeline of Space Exploration</h2>
+      <p style="color:var(--muted);">From the NACA propeller labs to the Artemis generation: the milestones that shaped NASA and human spaceflight. Press <strong>View NASA photo</strong> on any entry to pull an archival image straight from the NASA image library.</p>
+      <div id="historyContent"></div>
+    </div>
+  </div>
+
+  <!-- 9. MISSIONS & TOPICS PANEL -->
+  <div id="panel-topics" class="section-panel">
+    <div class="card">
+      <h2 style="margin-top:0;">NASA Missions &amp; Topics</h2>
+      <p style="color:var(--muted);">Sixteen doorways into the official NASA archive &mdash; Earth, the Sun, the universe, aeronautics, technology, people, live coverage and more. Pick a topic and the search below runs against the NASA image &amp; video library.</p>
+      <div id="topicsContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-bottom:12px;">
+      <a href="/">Home</a>
+      <a href="/nasa">NASA Explorer</a>
+      <a href="/blog">Blog &amp; Articles</a>
+      <a href="/docs">API Docs</a>
+      <a href="/about.html">About</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 Tukuk-OS &mdash; Powered by NASA Open Data API.</p>
+  </footer>
+</div>
+
+<script>
+// Set maximum date as today
+const todayStr = new Date().toISOString().slice(0, 10);
+document.getElementById('apodDate').max = todayStr;
+
+let issInterval = null;
+let issViewMode = '3d';
+let issMap = null;
+let issMarker = null;
+let experimentsStarted = false;
+let experimentRuns = 0;
+
+let scene, camera3d, renderer, globeMesh, atmosphereMesh, issMesh3d, starsMesh;
+let isDragging = false, prevMouseX = 0, prevMouseY = 0;
+let currentLat = 0, currentLon = 0;
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+
+  // Dipanggil secara langsung (onclick) atau secara program (exploreTopic)
+  let activeBtn = null;
+  if (typeof event !== 'undefined' && event && event.target && event.target.classList && event.target.classList.contains('tab-btn')) {
+    activeBtn = event.target;
+  } else {
+    activeBtn = Array.from(document.querySelectorAll('.tab-btn'))
+      .find(b => (b.getAttribute('onclick') || '').includes(`switchTab('${name}')`));
+  }
+  if (activeBtn) activeBtn.classList.add('active');
+  const panel = document.getElementById('panel-' + name);
+  if (panel) panel.classList.add('active');
+
+  if (name === 'iss') {
+    initISS();
+  } else if (issInterval) {
+    clearInterval(issInterval);
+    issInterval = null;
+  }
+
+  if (name === 'mars' && !document.getElementById('marsContent').children.length) loadMarsPhotos();
+  if (name === 'asteroids' && !document.getElementById('asteroidContent').querySelector('table')) loadAsteroids();
+  if (name === 'epic' && !document.getElementById('epicContent').children.length) loadEPIC();
+  if (name === 'audio' && !document.getElementById('audioContent').children.length) loadSpaceAudio();
+  if (name === 'history' && !document.getElementById('historyContent').children.length) loadHistory();
+  if (name === 'topics' && !document.getElementById('topicsContent').children.length) loadTopics();
+  if (name === 'experiments' && !experimentsStarted) {
+    experimentsStarted = true;
+    runAsteroidTrend();
+    runSolarActivity();
+    runIssMath();
+  }
+}
+
+async function safeFetchJson(url) {
+  const res = await fetch(url);
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error('NASA API server returned non-JSON response or is temporarily busy.');
+  }
+}
+
+function getRandomDate() {
+  const start = new Date(1996, 0, 1).getTime();
+  const end = new Date(Date.now() - 48 * 60 * 60 * 1000).getTime();
+  const randomTime = start + Math.random() * (end - start);
+  return new Date(randomTime).toISOString().slice(0, 10);
+}
+
+/* 1. APOD */
+async function loadAPOD(customDate) {
+  const container = document.getElementById('apodContent');
+  container.innerHTML = '<div class="spinner">Fetching NASA Astronomy Picture...</div>';
+  const dateVal = customDate || document.getElementById('apodDate').value;
+  const url = dateVal ? `/api/nasa/apod?date=${encodeURIComponent(dateVal)}` : '/api/nasa/apod';
+
+  try {
+    const data = await safeFetchJson(url);
+    if (data.error) throw new Error(data.error);
+
+    let mediaHtml = '';
+    if (data.media_type === 'video') {
+      mediaHtml = `<iframe class="apod-media" src="${data.url}" frameborder="0" allowfullscreen style="height:480px;"></iframe>`;
+    } else {
+      mediaHtml = `<img class="apod-media" src="${data.hdurl || data.url}" alt="${data.title}">`;
+    }
+
+    container.innerHTML = `
+      ${(data.stale || data.api_down) ? `<div style="background:rgba(255,196,0,.12); border:1px solid var(--gold); color:var(--text); padding:10px 14px; border-radius:8px; margin-bottom:14px; font-size:.9rem;">&#9888;&#65039; ${esc(data.staleNote || (data.api_down ? 'NASA\'s APOD API is temporarily offline — showing the same picture from the official NASA Science archive.' : 'NASA APOD API is temporarily unreachable — showing the last successful picture.'))} <button class="btn btn-secondary" style="margin-left:8px; padding:4px 10px; font-size:.8rem;" onclick="loadAPOD()">Try live again</button></div>` : ''}
+      ${mediaHtml}
+      <h2 class="apod-title">${data.title}</h2>
+      <div class="apod-meta">&#128197; ${data.date} ${data.copyright ? `&middot; &copy; ${data.copyright}` : ''}</div>
+      <p class="apod-desc">${data.explanation}</p>
+      ${data.hdurl ? `<p><a href="${data.hdurl}" target="_blank" rel="noopener" class="btn" style="display:inline-block; margin-top:8px;">Open Full HD Image</a></p>` : ''}
+    `;
+    if (data.date) {
+      document.getElementById('apodDate').value = data.date;
+    }
+  } catch (err) {
+    container.innerHTML = `
+      <div style="color:var(--danger); padding:24px; text-align:center;">
+        <div style="margin-bottom:12px;">&#128308; Unable to load APOD: ${esc(err.message)}<br><span style="color:var(--muted); font-size:.88rem;">NASA's APOD service is occasionally offline on their side. Nothing is wrong with this site.</span></div>
+        <button class="btn" onclick="loadAPOD()">&#8635; Retry</button>
+      </div>`;
+  }
+}
+
+async function loadRandomAPOD() {
+  const randomDate = getRandomDate();
+  document.getElementById('apodDate').value = randomDate;
+  loadAPOD(randomDate);
+}
+
+/* 2. 3D LIVE ISS TRACKER (THREE.JS GLOBE + LEAFLET 2D) */
+function setISSView(mode) {
+  issViewMode = mode;
+  document.getElementById('btn3d').classList.toggle('active', mode === '3d');
+  document.getElementById('btn2d').classList.toggle('active', mode === '2d');
+  
+  if (mode === '3d') {
+    document.getElementById('iss3dContainer').style.display = 'block';
+    document.getElementById('issMap').style.display = 'none';
+    if (renderer) onWindowResize();
+  } else {
+    document.getElementById('iss3dContainer').style.display = 'none';
+    document.getElementById('issMap').style.display = 'block';
+    if (!issMap) initLeaflet();
+    if (issMap) setTimeout(() => issMap.invalidateSize(), 200);
+  }
+}
+
+function latLonToVector3(lat, lon, radius) {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = (lon + 180) * (Math.PI / 180);
+  const x = -(radius * Math.sin(phi) * Math.cos(theta));
+  const z = radius * Math.sin(phi) * Math.sin(theta);
+  const y = radius * Math.cos(phi);
+  return new THREE.Vector3(x, y, z);
+}
+
+function init3DGlobe() {
+  const canvas = document.getElementById('iss3dCanvas');
+  const container = document.getElementById('iss3dContainer');
+  const width = container.clientWidth || 800;
+  const height = container.clientHeight || 480;
+
+  scene = new THREE.Scene();
+  camera3d = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+  camera3d.position.z = 240;
+
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // Lights
+  const ambientLight = new THREE.AmbientLight(0x8899bb, 1.2);
+  scene.add(ambientLight);
+
+  const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  sunLight.position.set(150, 80, 150);
+  scene.add(sunLight);
+
+  // Stars background
+  const starsGeo = new THREE.BufferGeometry();
+  const starCount = 800;
+  const starPositions = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount * 3; i += 3) {
+    starPositions[i] = (Math.random() - 0.5) * 600;
+    starPositions[i+1] = (Math.random() - 0.5) * 600;
+    starPositions[i+2] = (Math.random() - 0.5) * 600;
+  }
+  starsGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+  const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2, transparent: true, opacity: 0.8 });
+  starsMesh = new THREE.Points(starsGeo, starsMat);
+  scene.add(starsMesh);
+
+  // Earth Sphere
+  const textureLoader = new THREE.TextureLoader();
+  const earthTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+  const earthGeo = new THREE.SphereGeometry(70, 64, 64);
+  const earthMat = new THREE.MeshStandardMaterial({
+    map: earthTexture,
+    roughness: 0.8,
+    metalness: 0.1
+  });
+  globeMesh = new THREE.Mesh(earthGeo, earthMat);
+  scene.add(globeMesh);
+
+  // Atmosphere glow
+  const atmosGeo = new THREE.SphereGeometry(72.5, 64, 64);
+  const atmosMat = new THREE.MeshBasicMaterial({
+    color: 0x4c8dff,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.BackSide
+  });
+  atmosphereMesh = new THREE.Mesh(atmosGeo, atmosMat);
+  scene.add(atmosphereMesh);
+
+  // ISS Satellite Marker
+  const issGeo = new THREE.SphereGeometry(2.5, 16, 16);
+  const issMat = new THREE.MeshBasicMaterial({ color: 0xffd54a });
+  issMesh3d = new THREE.Mesh(issGeo, issMat);
+  
+  // Glowing ring for ISS
+  const ringGeo = new THREE.RingGeometry(3.5, 4.5, 32);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x4c8dff, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
+  const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+  issMesh3d.add(ringMesh);
+
+  scene.add(issMesh3d);
+
+  // Mouse Controls
+  canvas.addEventListener('mousedown', (e) => { isDragging = true; prevMouseX = e.clientX; prevMouseY = e.clientY; });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - prevMouseX;
+    const deltaY = e.clientY - prevMouseY;
+    if (globeMesh) {
+      globeMesh.rotation.y += deltaX * 0.005;
+      globeMesh.rotation.x += deltaY * 0.005;
+    }
+    prevMouseX = e.clientX;
+    prevMouseY = e.clientY;
+  });
+
+  // Touch controls
+  canvas.addEventListener('touchstart', (e) => { if (e.touches.length === 1) { isDragging = true; prevMouseX = e.touches[0].clientX; prevMouseY = e.touches[0].clientY; } });
+  window.addEventListener('touchend', () => { isDragging = false; });
+  window.addEventListener('touchmove', (e) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    const deltaX = e.touches[0].clientX - prevMouseX;
+    const deltaY = e.touches[0].clientY - prevMouseY;
+    if (globeMesh) {
+      globeMesh.rotation.y += deltaX * 0.005;
+      globeMesh.rotation.x += deltaY * 0.005;
+    }
+    prevMouseX = e.touches[0].clientX;
+    prevMouseY = e.touches[0].clientY;
+  });
+
+  // Zoom
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    camera3d.position.z = Math.min(Math.max(camera3d.position.z + e.deltaY * 0.1, 120), 400);
+  });
+
+  window.addEventListener('resize', onWindowResize);
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isDragging && globeMesh) {
+      globeMesh.rotation.y += 0.0008;
+    }
+    if (starsMesh) starsMesh.rotation.y += 0.0002;
+    renderer.render(scene, camera3d);
+  }
+  animate();
+}
+
+function onWindowResize() {
+  const container = document.getElementById('iss3dContainer');
+  if (!container || !renderer || !camera3d) return;
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  camera3d.aspect = width / height;
+  camera3d.updateProjectionMatrix();
+  renderer.setSize(width, height);
+}
+
+function initLeaflet() {
+  issMap = L.map('issMap').setView([0, 0], 3);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(issMap);
+
+  const issIcon = L.divIcon({
+    className: 'custom-iss-icon',
+    html: '<div style="font-size:26px; transform:translate(-13px,-13px);">🛰️</div>',
+    iconSize: [26, 26]
+  });
+
+  issMarker = L.marker([0, 0], { icon: issIcon }).addTo(issMap);
+}
+
+async function updateISSTelemetry() {
+  try {
+    const data = await safeFetchJson('/api/nasa/iss');
+    currentLat = data.latitude;
+    currentLon = data.longitude;
+
+    document.getElementById('issLat').textContent = `${currentLat.toFixed(2)}°`;
+    document.getElementById('issLon').textContent = `${currentLon.toFixed(2)}°`;
+    document.getElementById('issSpeed').textContent = `${data.velocity_kmh.toLocaleString()} km/h`;
+    document.getElementById('issAlt').textContent = `${data.altitude_km} km`;
+
+    // Update 3D position
+    if (issMesh3d) {
+      const pos3d = latLonToVector3(currentLat, currentLon, 76);
+      issMesh3d.position.copy(pos3d);
+      issMesh3d.lookAt(0, 0, 0);
+    }
+
+    // Update 2D Map position
+    if (issMap && issMarker) {
+      const pos2d = [currentLat, currentLon];
+      issMarker.setLatLng(pos2d);
+      if (issViewMode === '2d') issMap.panTo(pos2d);
+    }
+  } catch {
+    // silent
+  }
+}
+
+function initISS() {
+  if (!scene) init3DGlobe();
+  updateISSTelemetry();
+  if (issInterval) clearInterval(issInterval);
+  issInterval = setInterval(updateISSTelemetry, 4000);
+}
+
+/* 3. MARS ROVERS */
+async function loadMarsPhotos() {
+  const container = document.getElementById('marsContent');
+  container.innerHTML = '<div class="spinner" style="grid-column:1/-1;">Loading Mars surface imagery...</div>';
+  const rover = document.getElementById('marsRover').value;
+
+  try {
+    const data = await safeFetchJson(`/api/nasa/mars?rover=${encodeURIComponent(rover)}`);
+    const photos = data.photos || [];
+    if (!photos.length) {
+      container.innerHTML = '<div style="grid-column:1/-1; color:var(--muted); text-align:center; padding:30px;">No photos found.</div>';
+      return;
+    }
+
+    container.innerHTML = photos.map(p => `
+      <div class="photo-card">
+        <a href="${p.img_src}" target="_blank" rel="noopener">
+          <img src="${p.img_src}" alt="Mars Rover ${rover}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Mars+Photo'">
+        </a>
+        <div class="photo-card-body">
+          <div class="photo-card-title">${p.title || `${p.rover.name} &mdash; ${p.camera.name}`}</div>
+          <div class="photo-card-meta">&#128197; Date: ${p.earth_date} ${p.sol ? `(Sol ${p.sol})` : ''}</div>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    container.innerHTML = `<div style="grid-column:1/-1; color:var(--danger); padding:20px;">Error: ${err.message}</div>`;
+  }
+}
+
+/* 4. ASTEROIDS */
+async function loadAsteroids() {
+  const container = document.getElementById('asteroidContent');
+  container.innerHTML = '<div class="spinner">Calculating asteroid radar telemetry...</div>';
+  try {
+    const data = await safeFetchJson('/api/nasa/asteroids');
+    const list = data.asteroids || [];
+    if (!list.length) {
+      container.innerHTML = '<p style="color:var(--muted);">No asteroids detected currently.</p>';
+      return;
+    }
+
+    let rows = list.slice(0, 15).map(a => `
+      <tr>
+        <td><strong>${a.name}</strong></td>
+        <td>${a.close_approach_date}</td>
+        <td>${a.estimated_diameter_meters.min} - ${a.estimated_diameter_meters.max} meters</td>
+        <td>${a.velocity_kmh.toLocaleString()} km/h</td>
+        <td>${a.miss_distance_km.toLocaleString()} km</td>
+        <td>
+          <span class="badge ${a.is_potentially_hazardous ? 'badge-danger' : 'badge-safe'}">
+            ${a.is_potentially_hazardous ? '&#9888; Hazardous' : '&#10004; Safe'}
+          </span>
+        </td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Asteroid Name</th><th>Close Approach Date</th><th>Est. Diameter</th><th>Velocity</th><th>Miss Distance</th><th>Hazard Status</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  } catch (err) {
+    container.innerHTML = `<div style="color:var(--danger); padding:20px;">Error loading asteroids: ${err.message}</div>`;
+  }
+}
+
+/* 5. EPIC EARTH */
+async function loadEPIC() {
+  const container = document.getElementById('epicContent');
+  container.innerHTML = '<div class="spinner" style="grid-column:1/-1;">Connecting to DSCOVR spacecraft...</div>';
+  try {
+    const list = await safeFetchJson('/api/nasa/epic');
+    if (!list || !list.length) {
+      container.innerHTML = '<div style="grid-column:1/-1; color:var(--muted); text-align:center; padding:30px;">No recent satellite images found. <button class="btn btn-secondary" style="margin-top:12px; display:block; margin-left:auto; margin-right:auto;" onclick="loadEPIC()">&#8635; Try again</button></div>';
+      return;
+    }
+
+    container.innerHTML = list.map(item => `
+      <div class="photo-card">
+        <a href="${item.url}" target="_blank" rel="noopener">
+          <img src="${item.thumb}" alt="${item.caption}" loading="lazy" onerror="this.src='${item.url}'">
+        </a>
+        <div class="photo-card-body">
+          <div class="photo-card-title">${item.caption || 'Planet Earth Full-Disc'}</div>
+          <div class="photo-card-meta">&#128197; ${item.date} &middot; NOAA DSCOVR Satellite</div>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    container.innerHTML = `<div style="grid-column:1/-1; color:var(--danger); padding:20px;">Error: ${err.message}</div>`;
+  }
+}
+
+/* 6. SOUNDS OF SPACE */
+async function loadSpaceAudio(e) {
+  if (e) e.preventDefault();
+  const q = document.getElementById('audioQuery').value.trim() || 'apollo';
+  const container = document.getElementById('audioContent');
+  container.innerHTML = '<div class="spinner" style="grid-column:1/-1;">Searching space sound recordings...</div>';
+
+  try {
+    const data = await safeFetchJson(`/api/nasa/audio?q=${encodeURIComponent(q)}`);
+    const items = data.items || [];
+    if (!items.length) {
+      container.innerHTML = '<div style="grid-column:1/-1; color:var(--muted); text-align:center; padding:30px;">No audio found for this query.</div>';
+      return;
+    }
+
+    container.innerHTML = items.map(a => `
+      <div class="audio-card">
+        <div>
+          <div style="font-weight:600; font-size:1.05rem; margin-bottom:6px;">🎧 ${a.title}</div>
+          <div style="font-size:.82rem; color:var(--muted); margin-bottom:8px;">${a.date_created ? a.date_created.slice(0, 10) : ''}</div>
+          <p style="font-size:.85rem; color:var(--text); margin:0 0 12px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${a.description || ''}</p>
+        </div>
+        <audio controls src="${a.audio_url}" preload="none"></audio>
+      </div>
+    `).join('');
+  } catch (err) {
+    container.innerHTML = `<div style="grid-column:1/-1; color:var(--danger);">Error loading audio: ${err.message}</div>`;
+  }
+}
+
+/* 7. MEDIA SEARCH */
+let nasaSearchMediaType = 'image';
+
+async function searchNASA(e) {
+  if (e) e.preventDefault();
+  const q = document.getElementById('nasaQuery').value.trim();
+  if (!q) return;
+
+  const container = document.getElementById('searchContent');
+  container.innerHTML = `<div class="spinner" style="grid-column:1/-1;">Searching "${q}" across NASA archives...</div>`;
+  try {
+    const data = await safeFetchJson(`/api/nasa/search?q=${encodeURIComponent(q)}&mediaType=${encodeURIComponent(nasaSearchMediaType)}`);
+    const items = data.items || [];
+    if (!items.length) {
+      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--muted);">No results found for "${q}". <button class="btn btn-secondary" style="margin-top:12px; display:block; margin-left:auto; margin-right:auto;" onclick="searchNASA()">&#8635; Try again</button></div>`;
+      return;
+    }
+
+    container.innerHTML = items.map(item => `
+      <div class="photo-card">
+        ${item.thumb ? `<a href="${esc(item.asset_url || item.thumb)}" target="_blank" rel="noopener" style="display:block; position:relative;">${item.media_type === 'video' ? '<span style="position:absolute; top:8px; left:8px; background:rgba(0,0,0,.7); border-radius:6px; padding:2px 8px; font-size:.72rem;">&#9654; Video</span>' : ''}<img src="${esc(item.thumb)}" alt="${esc(item.title || '')}" loading="lazy"></a>` : ''}
+        <div class="photo-card-body">
+          <div class="photo-card-title">${item.title}</div>
+          <div class="photo-card-meta">&#128197; ${item.date_created ? item.date_created.slice(0, 10) : ''} ${item.center ? `&middot; ${item.center}` : ''}</div>
+          <p style="font-size:.84rem; color:var(--text); margin:8px 0 0; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${item.description || ''}</p>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    container.innerHTML = `<div style="grid-column:1/-1; color:var(--danger); padding:20px;">Error: ${err.message} <button class="btn" style="margin-left:8px;" onclick="searchNASA()">&#8635; Retry</button></div>`;
+  }
+}
+
+/* ===== NASA EXPERIMENTS LAB ===== */
+function bumpRuns() {
+  experimentRuns += 1;
+  const el = document.getElementById('expRuns');
+  if (el) el.textContent = experimentRuns;
+}
+
+function esc(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function fmtNum(value) {
+  return Number(value || 0).toLocaleString();
+}
+
+function statTiles(items) {
+  return `<div class="telemetry-grid">${items.filter(Boolean).map(item => `
+    <div class="telemetry-box">
+      <div class="telemetry-label">${item.label}</div>
+      <div class="telemetry-val" style="font-size:1.25rem;">${item.value}</div>
+      ${item.note ? `<div style="font-size:.78rem;color:var(--muted);margin-top:6px;">${item.note}</div>` : ''}
+    </div>`).join('')}</div>`;
+}
+
+function svgSeries({ labels, series, height = 210 }) {
+  const max = Math.max(...series.flatMap(s => s.values), 1);
+  const W = 680, H = height, pad = 34, gap = 14, groupGap = 4;
+  const groupW = (W - pad * 2 - gap * (labels.length - 1)) / labels.length;
+  const barW = (groupW - groupGap * (series.length - 1)) / series.length;
+  let bars = '';
+  labels.forEach((lab, gi) => {
+    const gx = pad + gi * (groupW + gap);
+    series.forEach((s, si) => {
+      const v = Number(s.values[gi] || 0);
+      const h = Math.max(v > 0 ? 4 : 0, (v / max) * (H - pad * 2));
+      const x = gx + si * (barW + groupGap);
+      const y = H - pad - h;
+      bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" rx="4" style="fill:${s.color};"></rect>`;
+      if (v > 0) bars += `<text x="${(x + barW / 2).toFixed(1)}" y="${(y - 6).toFixed(1)}" text-anchor="middle" font-size="10" fill="currentColor">${fmtNum(v)}</text>`;
+    });
+    bars += `<text x="${(gx + groupW / 2).toFixed(1)}" y="${H - 9}" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.65">${esc(lab)}</text>`;
+  });
+  const legend = series.map(s =>
+    `<span style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);"><span style="width:10px;height:10px;border-radius:3px;background:${s.color};display:inline-block;"></span>${esc(s.name)}</span>`
+  ).join('');
+  return `<div><svg viewBox="0 0 ${W} ${H}" role="img" style="width:100%;height:auto;">${bars}</svg><div style="display:flex;gap:18px;justify-content:center;margin-top:8px;flex-wrap:wrap;">${legend}</div></div>`;
+}
+
+function dayLabel(start, end) {
+  return `${esc(String(start).slice(5))} → ${esc(String(end).slice(5))}`;
+}
+
+async function runAsteroidTrend() {
+  const out = document.getElementById('expTrendOut');
+  const weeks = document.getElementById('expWeeks').value;
+  out.innerHTML = '<div class="spinner">Collecting NeoWs measurements&hellip;</div>';
+  bumpRuns();
+  try {
+    const d = await safeFetchJson(`/api/nasa/experiments/asteroid-trend?weeks=${weeks}`);
+    if (d.error) throw new Error(d.error);
+
+    const labels = d.buckets.map(b => dayLabel(b.start, b.end));
+    const chart = svgSeries({
+      labels,
+      series: [
+        { name: 'Close approaches', color: 'var(--accent)', values: d.buckets.map(b => b.count) },
+        { name: 'Potentially hazardous', color: 'var(--danger)', values: d.buckets.map(b => b.hazardous) }
+      ]
+    });
+
+    const trend = d.trend;
+    const verdict = trend.direction === 'up'
+      ? `▲ ${trend.changePercent}%`
+      : trend.direction === 'down'
+        ? `▼ ${Math.abs(trend.changePercent)}%`
+        : '– stable';
+
+    out.innerHTML = `
+      ${statTiles([
+        { label: 'Objects counted', value: fmtNum(d.totals.asteroids), note: `average ${d.totals.avgPerWeek} / week` },
+        { label: 'Potentially hazardous', value: fmtNum(d.totals.hazardous) },
+        { label: 'Trend (2nd half vs 1st)', value: verdict },
+        d.nearest ? { label: 'Closest pass', value: `${fmtNum(d.nearest.miss_distance_km)} km`, note: `${d.nearest.moonDistances}× Moon distance` } : null
+      ])}
+      <div style="margin-top:22px;">${chart}</div>
+      ${d.nearest ? `<p style="font-size:.9rem;color:var(--muted);margin-top:16px;">Closest object in this window: <strong>${esc(d.nearest.name)}</strong> &mdash; ${fmtNum(d.nearest.miss_distance_km)} km away (${d.nearest.moonDistances}× the Moon) at ${fmtNum(d.nearest.velocity_kmh)} km/h, ${d.nearest.is_potentially_hazardous ? 'flagged <span style="color:var(--danger)">potentially hazardous</span>' : 'not flagged as hazardous'}. <a href="${esc(d.nearest.nasa_jpl_url)}" target="_blank" rel="noopener">JPL record</a></p>` : ''}
+      <p style="font-size:.8rem;color:var(--muted);margin-top:12px;">Window ${esc(d.buckets[0].start)} → ${esc(d.buckets[d.buckets.length - 1].end)} · computed ${esc(new Date(d.generatedAt).toLocaleString())}${d.degraded ? ' · <span style="color:var(--danger)">partial data (NASA feed fallback in use)</span>' : ''}</p>
+    `;
+  } catch (err) {
+    out.innerHTML = `<div style="color:var(--danger);padding:16px;">Experiment failed: ${esc(err.message)}</div>`;
+  }
+}
+
+async function runSolarActivity() {
+  const out = document.getElementById('expSolarOut');
+  const days = document.getElementById('expDays').value;
+  out.innerHTML = '<div class="spinner">Reading NOAA GOES flare records&hellip;</div>';
+  bumpRuns();
+  try {
+    const d = await safeFetchJson(`/api/nasa/experiments/solar?days=${days}`);
+    if (d.error) throw new Error(d.error);
+
+    const flareBuckets = d.flares.buckets || [];
+    const fluxBuckets = d.flux.buckets || [];
+    const flareChart = flareBuckets.length ? svgSeries({
+      labels: flareBuckets.map(b => b.label),
+      series: [{ name: 'X-ray flares / day', color: 'var(--gold)', values: flareBuckets.map(b => b.flares) }]
+    }) : '';
+    const fluxChart = fluxBuckets.length ? svgSeries({
+      labels: fluxBuckets.map(b => `${b.start.slice(5)} → ${b.end.slice(5)}`),
+      series: [{ name: 'F10.7 radio flux (sfu)', color: 'var(--accent)', values: fluxBuckets.map(b => b.flux) }]
+    }) : '';
+
+    const cls = d.flares.classes || {};
+    const strongest = d.flares.strongest;
+    const flux = d.flux;
+    const fluxVerdict = flux.direction === 'up'
+      ? `▲ ${flux.changePercent}%`
+      : flux.direction === 'down'
+        ? `▼ ${Math.abs(flux.changePercent)}%`
+        : '– stable';
+
+    out.innerHTML = `
+      ${statTiles([
+        { label: 'X-ray flares (7 days)', value: fmtNum(d.flares.total), note: `${fmtNum(cls.X || 0)}× class X · ${fmtNum(cls.M || 0)}× M · ${fmtNum(cls.C || 0)}× C · ${fmtNum(cls.B || 0)}× B` },
+        strongest && strongest.classType
+          ? { label: 'Strongest flare', value: esc(strongest.classType), note: esc(String(strongest.time || '').slice(0, 16).replace('T', ' ')) }
+          : { label: 'Strongest flare', value: 'none recorded' },
+        { label: 'Average F10.7 flux', value: `${fmtNum(flux.avg)} sfu`, note: `range ${fmtNum(flux.min)}–${fmtNum(flux.max)} sfu` },
+        { label: 'Flux trend (2nd half vs 1st)', value: fluxVerdict }
+      ])}
+      ${flareChart ? `<h4 style="margin:24px 0 4px; font-size:.95rem;">Flares per day (last 7 days)</h4><div>${flareChart}</div>` : ''}
+      ${fluxChart ? `<h4 style="margin:24px 0 4px; font-size:.95rem;">Solar radio flux F10.7 (${flux.days} days)</h4><div>${fluxChart}</div>` : ''}
+      <p style="font-size:.8rem;color:var(--muted);margin-top:14px;">Source: ${esc(d.source)} · window ${flux.window ? `${esc(flux.window.start)} → ${esc(flux.window.end)}` : 'n/a'} · computed ${esc(new Date(d.generatedAt).toLocaleString())}</p>
+    `;
+  } catch (err) {
+    out.innerHTML = `<div style="color:var(--danger);padding:16px;">Experiment failed: ${esc(err.message)}</div>`;
+  }
+}
+
+async function runIssMath() {
+  const out = document.getElementById('expIssOut');
+  out.innerHTML = '<div class="spinner">Reading live ISS telemetry&hellip;</div>';
+  bumpRuns();
+  try {
+    const iss = await safeFetchJson('/api/nasa/iss');
+    if (iss.error) throw new Error(iss.error);
+
+    const EARTH_R = 6371;            // km
+    const GM = 398600.4418;          // km^3/s^2
+    const a = EARTH_R + Number(iss.altitude_km);
+    const periodMin = (2 * Math.PI * Math.sqrt((a * a * a) / GM)) / 60;
+    const launched = Date.UTC(1998, 10, 20);
+    const orbitsFlown = Math.floor((Date.now() - launched) / (periodMin * 60000));
+    const now = new Date();
+    const secondsToday = (Date.now() - Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())) / 1000;
+    const kmToday = Number(iss.velocity_kmh) * (secondsToday / 3600);
+    const vsAirliner = Number(iss.velocity_kmh) / 913;
+    const vsEverest = Number(iss.altitude_km) / 8.85;
+
+    const chart = svgSeries({
+      labels: ['ISS', 'Boeing 747', 'Bullet train'],
+      series: [{ name: 'Speed (km/h)', color: 'var(--accent)', values: [Math.round(iss.velocity_kmh), 913, 320] }]
+    });
+
+    out.innerHTML = `
+      ${statTiles([
+        { label: 'Computed orbit period', value: `${periodMin.toFixed(1)} min`, note: 'Kepler from live altitude' },
+        { label: 'Orbits flown since 1998', value: fmtNum(orbitsFlown) },
+        { label: 'Distance today', value: `${fmtNum(Math.round(kmToday))} km`, note: 'live speed × hours since 00:00 UTC' },
+        { label: 'Faster than a 747', value: `× ${vsAirliner.toFixed(1)}` },
+        { label: 'Altitude vs Everest', value: `× ${vsEverest.toFixed(0)}` },
+        { label: 'Live altitude', value: `${fmtNum(iss.altitude_km)} km`, note: `${fmtNum(Math.round(iss.velocity_kmh))} km/h` }
+      ])}
+      <div style="margin-top:22px;">${chart}</div>
+      <p style="font-size:.9rem;color:var(--muted);margin-top:16px;">Verdict: at ${fmtNum(Math.round(iss.altitude_km))} km altitude Kepler predicts a ${periodMin.toFixed(1)}-minute period &mdash; the ISS completes <strong>${fmtNum(Math.round(24 * 60 / periodMin))}</strong> orbits per day and laps the Earth ${fmtNum(Math.round(24 * 60 / periodMin))} times while you sleep.</p>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:10px;">Live telemetry read at ${esc(new Date(Number(iss.timestamp) * 1000).toLocaleString())} · source: wheretheiss.at</p>
+    `;
+  } catch (err) {
+    out.innerHTML = `<div style="color:var(--danger);padding:16px;">Experiment failed: ${esc(err.message)}</div>`;
+  }
+}
+
+/* ===== NASA HISTORY TIMELINE ===== */
+const NASA_HISTORY = [
+  { year: '1915', title: 'NACA is founded', q: 'NACA wind tunnel', text: 'The National Advisory Committee for Aeronautics opens for business on 3 March 1915 to keep American aviation competitive. Its Langley laboratories in Virginia build the wind tunnels and propeller research that will later feed directly into the space age.' },
+  { year: '1947', title: 'Breaking the sound barrier', q: 'Bell X-1', text: 'On 14 October 1947 Chuck Yeager flies the rocket-powered Bell X-1 past Mach 1 in a NACA programme. The data gathered from flights like this one turns supersonic flight from a dangerous guess into an engineering discipline.' },
+  { year: '1958', title: 'NASA is born', q: 'Explorer 1 satellite', text: 'President Eisenhower signs the National Aeronautics and Space Act on 29 July 1958, folding NACA and the Army and Navy space efforts into one civilian agency. Earlier that year Explorer 1 had already become the first American satellite, discovering the Van Allen radiation belts.' },
+  { year: '1961', title: 'First American in space', q: 'Alan Shepard Freedom 7', text: 'Alan Shepard flies Freedom 7 on 5 May 1961, a 15-minute suborbital hop that proves the Mercury capsule works. Three weeks later President Kennedy commits the nation to landing a man on the Moon before the end of the decade.' },
+  { year: '1962', title: 'America orbits the Earth', q: 'John Glenn Friendship 7', text: 'John Glenn circles the globe three times in Friendship 7 on 20 February 1962, watching fires in Australia and a parachute dropped by fishermen flash beneath him. The flight makes Mercury a true orbital programme overnight.' },
+  { year: '1969', title: 'Apollo 11 lands on the Moon', q: 'Apollo 11 launch', text: 'On 20 July 1969 Neil Armstrong and Buzz Aldrin set the lunar module Eagle down in the Sea of Tranquility while Michael Collins waits in orbit. "That is one small step for man, one giant leap for mankind" is heard by an estimated 600 million people.' },
+  { year: '1976', title: 'Viking touches down on Mars', q: 'Viking Mars lander', text: 'Viking 1 becomes the first US spacecraft to land successfully on Mars on 20 July 1976, operating for over six years. Its cameras and soil experiments give humanity its first close look at the Martian surface and the first search for life there.' },
+  { year: '1977', title: 'Voyager starts the Grand Tour', q: 'Voyager spacecraft', text: 'Voyager 2 launches on 20 August 1977, Voyager 1 on 5 September, exploiting a rare alignment of the outer planets. They go on to reveal active volcanoes on Io, new moons of Uranus and Neptune, and still phone home from interstellar space today.' },
+  { year: '1981', title: 'First Space Shuttle flight', q: 'Space Shuttle Columbia first flight', text: 'Columbia lifts off on 12 April 1981 on STS-1, the first crewed launch of a reusable spacecraft. It lands like an aeroplane two days later, opening the era in which astronauts fly to orbit, work, and come home to a runway.' },
+  { year: '1986', title: 'Challenger, STS-51-L', q: 'Challenger STS-51-L', text: 'On 28 January 1986 the shuttle Challenger breaks apart 73 seconds after launch, killing the seven-member crew including teacher Christa McAuliffe. The Rogers Commission traces the loss to an O-ring seal that failed in cold weather — NASA rewrites its safety culture.' },
+  { year: '1990', title: 'Hubble sees first light', q: 'Hubble Space Telescope deployment', text: 'Deployed from Discovery on 24 April 1990, the Hubble Space Telescope is released with a flawed mirror, corrected by servicing missions a few years later. From orbit it sees past dust and atmosphere, remapping the age and expansion of the universe.' },
+  { year: '1997', title: 'Sojourner rolls on Mars', q: 'Mars Pathfinder', text: 'Mars Pathfinder lands on 4 July 1997 and releases Sojourner, the first wheeled rover to drive on another planet. Airbag landings and small autonomous rovers prove that Mars can be explored on a fraction of a flagship mission budget.' },
+  { year: '1998', title: 'The ISS begins', q: 'International Space Station assembly', text: 'The Russian Zarya module launches on 20 November 1998 and is joined by Unity from the shuttle ten days later. Since 2000 the International Space Station has been continuously occupied — a laboratory that has hosted thousands of experiments and crews from dozens of countries.' },
+  { year: '2003', title: 'Columbia, STS-107', q: 'Space Shuttle Columbia STS-107', text: 'On 1 February 2003 Columbia is lost during re-entry with its crew of seven after foam struck the wing during launch. The Columbia Accident Investigation Board reforms shuttle inspection and retirement follows in 2011 — the lesson is written into every mission since.' },
+  { year: '2004', title: 'Twin rovers on Mars', q: 'Mars Exploration Rover Spirit Opportunity', text: 'Spirit lands on 3 January and Opportunity on 24 January 2004, each designed for 90 days. Opportunity keeps driving for almost 15 years, finding ancient lakebeds and mineral evidence that liquid water once flowed across the Martian surface.' },
+  { year: '2011', title: 'The shuttle era ends', q: 'Space Shuttle Atlantis STS-135', text: 'Atlantis lands on 21 July 2011 at the close of STS-135, the 135th shuttle mission. Across 30 years the fleet flew 135 missions, deployed the Hubble Space Telescope, assembled the space station, and brought crews home to a runway for the last time.' },
+  { year: '2012', title: 'Curiosity in Gale Crater', q: 'Curiosity rover Gale crater', text: 'On 6 August 2012 the Mars Science Laboratory lowers Curiosity onto the floor of Gale Crater on a rocket-powered sky crane. The car-sized rover climbs Mount Sharp reading a chapter-by-chapter record of Mars changing from wet to dry.' },
+  { year: '2015', title: 'Pluto up close', q: 'New Horizons Pluto', text: 'New Horizons flies past Pluto on 14 July 2015 after a nine-and-a-half-year cruise, returning the first detailed images of the dwarf planet. The pictures show nitrogen-ice glaciers, water-ice mountains and a thin blue haze — worlds at the edge are geologically alive.' },
+  { year: '2021', title: 'Perseverance, Ingenuity and Webb', q: 'Perseverance rover Jezero', text: 'Perseverance lands in Jezero Crater on 18 February 2021 to cache samples for return, and on 19 April the Ingenuity helicopter makes the first powered flight on another world. On 25 December the James Webb Space Telescope launches toward the Sun-Earth L2 point.' },
+  { year: '2022', title: 'Artemis I and Webb first images', q: 'Artemis I', text: 'Webb delivers its first deep-field images on 12 July 2022, looking further into the universe than ever before. On 16 November the uncrewed Artemis I Orion spacecraft launches on the Space Launch System, flying around the Moon and splashing down on 11 December.' },
+  { year: 'Today', title: 'The Artemis generation', q: 'International Space Station', text: 'NASA now runs the ISS, operates Webb, studies the Sun with Parker and the asteroids with OSIRIS-REx samples, and prepares crewed Artemis missions to the Moon ahead of the first human steps on Mars — every mission built on the timeline above.' }
+];
+
+async function loadHistory() {
+  const wrap = document.getElementById('historyContent');
+  wrap.innerHTML = `
+    <div class="timeline" style="position:relative; padding-left:26px; margin-top:10px;">
+      <div style="position:absolute; left:7px; top:6px; bottom:6px; width:2px; background:linear-gradient(var(--accent), transparent);"></div>
+      ${NASA_HISTORY.map((h, i) => `
+        <div class="timeline-item" style="position:relative; margin-bottom:22px;">
+          <span style="position:absolute; left:-25px; top:6px; width:14px; height:14px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px rgba(96,165,250,.25);"></span>
+          <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
+            <strong style="font-size:1.08rem; color:var(--accent);">${esc(h.year)}</strong>
+            <span style="font-weight:600;">${esc(h.title)}</span>
+          </div>
+          <p style="margin:6px 0 8px; font-size:.9rem; color:var(--text); line-height:1.6;">${esc(h.text)}</p>
+          <button class="btn btn-secondary" style="font-size:.78rem; padding:5px 12px;" onclick="loadHistoryPhoto(${i}, this)">&#128247; View NASA photo</button>
+          <div id="histPhoto${i}" style="margin-top:10px;"></div>
+        </div>
+      `).join('')}
+    </div>
+    <p style="font-size:.78rem; color:var(--muted); margin-top:6px;">Dates are historical record; images are pulled live from the official NASA image and video library.</p>
+  `;
+}
+
+async function loadHistoryPhoto(idx, btn) {
+  const target = document.getElementById('histPhoto' + idx);
+  const entry = NASA_HISTORY[idx];
+  if (!target || !entry) return;
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
+  target.innerHTML = '<div class="spinner" style="padding:8px;">Searching NASA image library…</div>';
+  try {
+    const data = await safeFetchJson(`/api/nasa/search?q=${encodeURIComponent(entry.q)}`);
+    const item = (data.items || [])[0];
+    if (!item || !item.thumb) throw new Error('no image found');
+    target.innerHTML = `
+      <a href="${esc(item.asset_url || item.thumb)}" target="_blank" rel="noopener" style="display:block; max-width:520px;">
+        <img src="${esc(item.thumb)}" alt="${esc(item.title || entry.title)}" loading="lazy" style="width:100%; border-radius:10px; border:1px solid rgba(255,255,255,.12);">
+      </a>
+      <div style="font-size:.76rem; color:var(--muted); margin-top:6px;">${esc(item.title || '')}</div>
+    `;
+    if (btn) btn.textContent = '✓ Photo loaded';
+  } catch (err) {
+    target.innerHTML = `<div style="color:var(--danger); font-size:.85rem;">Could not load a photo: ${esc(err.message)} <button class="btn btn-secondary" style="font-size:.75rem; padding:3px 8px; margin-left:6px;" onclick="loadHistoryPhoto(${idx}, this)">Retry</button></div>`;
+    if (btn) btn.remove();
+  }
+}
+
+/* ===== MISSIONS & TOPICS ===== */
+const NASA_TOPICS = [
+  { icon: '&#127758;', title: 'Earth', q: 'Earth from space ISS', mediaType: 'image', desc: 'Our planet photographed from orbit — oceans, storms, city lights and the thin blue atmosphere.' },
+  { icon: '&#9728;&#65039;', title: 'Solar System', q: 'Sun solar dynamics observatory', mediaType: 'image', desc: 'The Sun, the planets, their moons, comets and the solar wind that fills the space between.' },
+  { icon: '&#127756;', title: 'Universe', q: 'Hubble Webb deep field nebula', mediaType: 'image', desc: 'Galaxies, nebulae, exoplanets and the deep fields that look back to the early universe.' },
+  { icon: '&#9992;&#65039;', title: 'Aeronautics', q: 'X-59 experimental supersonic aircraft', mediaType: 'image', desc: 'Research aircraft, supersonic flight, rotorcraft and the experiments flown in Earth’s atmosphere.' },
+  { icon: '&#128295;', title: 'Technology', q: 'NASA technology demonstration', mediaType: 'image', desc: 'Instruments, robotics, propulsion and hardware engineered to survive extreme environments.' },
+  { icon: '&#127916;', title: 'Media', q: 'NASA image video library', mediaType: 'image', desc: 'Official photographs, graphics and mission media released into the public domain.' },
+  { icon: '&#128640;', title: 'Space', q: 'rocket launch spacecraft liftoff', mediaType: 'image', desc: 'Launches, orbiters, landers and deep-space missions leaving the ground and the planet.' },
+  { icon: '&#128225;', title: 'Activity', q: 'NASA mission operations activity', mediaType: 'image', desc: 'Mission control, field campaigns, public programmes and the day-to-day work of exploration.' },
+  { icon: '&#127910;', title: 'Video', q: 'NASA mission', mediaType: 'video', desc: 'Mission footage, explainers and films pulled straight from the NASA video archive.' },
+  { icon: '&#128300;', title: 'Study', q: 'NASA research science results', mediaType: 'image', desc: 'Peer-reviewed science, ISS experiments and the long-term measurements behind NASA research.' },
+  { icon: '&#128105;&#8205;&#128640;', title: 'People', q: 'NASA astronaut crew portrait', mediaType: 'image', desc: 'Astronauts, engineers, scientists and the crews behind every mission, past and present.' },
+  { icon: '&#127760;', title: 'World', q: 'Earth global view world', mediaType: 'image', desc: 'Earth science data — how NASA measures weather, ice, oceans and climate across the whole planet.' },
+  { icon: '&#128094;', title: 'Step', q: 'NASA mission launch milestones', mediaType: 'image', desc: 'How a mission is built and flown step by step: concept, design, test, launch, landing, data.' },
+  { icon: '&#128250;', title: 'Live', q: 'NASA live broadcast', mediaType: 'video', desc: 'Watch NASA TV, launch coverage and live mission events as they happen.', live: true },
+  { icon: '&#9888;&#65039;', title: 'Accident', q: 'Challenger Columbia accident investigation', mediaType: 'image', desc: 'How NASA investigated its losses — Challenger, Columbia and the boards that changed safety.' },
+  { icon: '&#128736;&#65039;', title: 'Problem', q: 'NASA engineering challenge solution', mediaType: 'image', desc: 'Failures, fixes and the engineering lessons written into every vehicle that followed.' }
+];
+
+function loadTopics() {
+  const wrap = document.getElementById('topicsContent');
+  wrap.innerHTML = `
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:14px; margin-top:8px;">
+      ${NASA_TOPICS.map((t, i) => `
+        <div class="topic-card" style="border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:16px; background:rgba(255,255,255,.03); display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:1.5rem;">${t.icon}</div>
+          <div style="font-weight:700;">${esc(t.title)}</div>
+          <p style="margin:0; font-size:.84rem; color:var(--muted); line-height:1.55; flex:1;">${esc(t.desc)}</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn" style="font-size:.8rem; padding:6px 12px;" onclick="exploreTopic(${i})">Explore</button>
+            ${t.live ? '<a class="btn btn-secondary" style="font-size:.8rem; padding:6px 12px;" href="https://www.youtube.com/@NASA/live" target="_blank" rel="noopener">Watch Live</a>' : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <p style="font-size:.78rem; color:var(--muted); margin-top:16px;">Every topic queries the official NASA image &amp; video library (images-api.nasa.gov) in real time &mdash; nothing here is pre-baked.</p>
+  `;
+}
+
+function exploreTopic(i) {
+  const t = NASA_TOPICS[i];
+  if (!t) return;
+  switchTab('search');
+  document.getElementById('nasaQuery').value = t.q;
+  nasaSearchMediaType = t.mediaType || 'image';
+  searchNASA();
+}
+
+// Initial load
+loadAPOD();
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+[Unit]
+Description=Meilisearch (mesin carian Tukuk-OS)
+Documentation=https://www.meilisearch.com/docs
+After=network-online.target
+Wants=network-online.target
+# Cuba mula semula selamanya, tanpa sekatan
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=/home/tukuk/tukuk-os
+EnvironmentFile=/home/tukuk/.config/tukuk-os/env
+ExecStart=/home/tukuk/.local/bin/meilisearch --db-path /home/tukuk/tukuk-os/meili_data --master-key ${MEILI_MASTER_KEY} --http-addr ${MEILI_BIND}:7700
+
+Restart=always
+RestartSec=3
+RestartForceExitStatus=SIGABRT
+
+MemoryMax=2G
+TasksMax=256
+LimitNOFILE=65536
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=meilisearch
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/tukuk/tukuk-os/meili_data /home/tukuk/tukuk-os/snapshots
+
+[Install]
+WantedBy=default.target

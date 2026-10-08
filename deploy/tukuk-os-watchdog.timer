@@ -1,0 +1,11 @@
+[Unit]
+Description=Watchdog Tukuk-OS setiap 2 minit
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+AccuracySec=30s
+Unit=tukuk-os-watchdog.service
+
+[Install]
+WantedBy=timers.target

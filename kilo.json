@@ -1,0 +1,26 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "cloudflare": {
+    "type": "remote",
+    "url": "https://mcp.cloudflare.com/mcp",
+    "enabled": true,
+    "oauth": {}
+  },
+  "agents": {
+    "cloudflare": {
+      "description": "Full access Cloudflare agent for tukuk.org",
+      "tools": ["bash", "read", "write", "edit"]
+    }
+  },
+  "commands": {
+    "cloudflare-dns": {
+      "description": "Manage Cloudflare DNS records for tukuk.org"
+    },
+    "cloudflare-tunnel": {
+      "description": "Manage Cloudflare Tunnel for tukuk.org"
+    },
+    "cloudflare-worker": {
+      "description": "Manage Cloudflare Workers and R2 for Tukuk-OS fallback"
+    }
+  }
+}

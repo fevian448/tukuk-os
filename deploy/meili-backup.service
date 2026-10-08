@@ -1,0 +1,9 @@
+[Unit]
+Description=Backup Meilisearch ke Cloudflare R2
+After=meilisearch.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/tukuk/tukuk-os
+EnvironmentFile=/home/tukuk/.config/tukuk-os/r2.env
+ExecStart=/home/tukuk/tukuk-os/scripts/backup-meili.sh

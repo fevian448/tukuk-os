@@ -1,0 +1,43 @@
+# ─── Dependencies ────────────────────────────────────────────
+node_modules/
+package-lock.json.bak
+
+# ─── Rahsia: JANGAN commit kunci sebenar ──────────────────────
+.env
+.env.*
+!.env.example
+scripts/r2.env
+
+# ─── Meilisearch: pangkalan data indeks ───────────────────────
+# State dalam bentuk fail — dijana semula, tidak perlu disimpan.
+meili_data/
+*.ms
+
+# ─── Snapshot & dump: salinan rizab, jenis binari ─────────────
+# Dijana oleh scripts/backup-meili.sh dan deploy/meili-backup.*
+snapshots/
+dumps/
+*.snapshot
+
+# ─── State masa jalan ─────────────────────────────────────────
+# Statistik dan cache ditulis semasa servis hidup.
+data/
+*.log
+
+# ─── Artifak tetap ───────────────────────────────────────────
+# Salinan statik yang tidak perlu dalam kawalan versi.
+Tukuk-Os.html
+
+# ─── OS & editor ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# ─── Electron build output ───────────────────────────────────
+dist/
+datasets/
+node_modules/
+meili_data/

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /stats
+Disallow: /health
+
+Sitemap: /sitemap.xml

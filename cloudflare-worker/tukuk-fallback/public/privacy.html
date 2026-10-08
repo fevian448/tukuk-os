@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dasar Privasi &mdash; Tukuk-OS</title>
+<meta name="description" content="Dasar privasi Tukuk-OS: data apa yang dikumpul, mengapa ia dikumpul, dan hak pengguna.">
+<link rel="canonical" href="/privacy">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128269;</text></svg>">
+<style>
+  :root { --bg:#0f1115; --panel:#171a21; --line:#262b36; --text:#e6e9ef; --muted:#9aa3b2; --accent:#4c8dff; }
+  @media (prefers-color-scheme: light) { :root { --bg:#f7f8fa; --panel:#fff; --line:#e3e6ec; --text:#151922; --muted:#5c6472; --accent:#1f6feb; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.75 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:0 20px; }
+  header { padding:48px 0 8px; }
+  h1 { margin:0 0 6px; font-size:2rem; letter-spacing:-.4px; }
+  h2 { margin:36px 0 10px; font-size:1.2rem; }
+  h3 { margin:22px 0 8px; font-size:1rem; color:var(--muted); }
+  .updated { color:var(--muted); font-size:.9rem; margin:0; }
+  a { color:var(--accent); }
+  nav { display:flex; gap:14px; flex-wrap:wrap; margin:24px 0 0; padding:16px 0;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line); font-size:.9rem; }
+  footer { margin:44px 0; color:var(--muted); font-size:.88rem; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:18px 0; }
+  code { background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-size:.9em; }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>Dasar Privasi</h1>
+  <p class="updated">Kemas kini: 5 Oktober 2026 &middot; tentang perkhidmatan: <a href="/about">Tukuk-OS</a></p>
+  <nav>
+    <a href="/">Carian</a><a href="/about">Tentang</a><a href="/privacy">Privasi</a>
+    <a href="/terms">Terma</a><a href="/contact">Hubungi</a><a href="/api">API</a>
+  </nav>
+</header>
+
+<main class="wrap">
+<p>Dasar ini menerangkan data apa yang dikumpul oleh <strong>Tukuk-OS</strong> (&ldquo;perkhidmatan&rdquo;), mengapa ia dikumpul, dan hak yang anda ada terhadapnya. Perkhidmatan ini ialah enjin carian web percuma.</p>
+
+<h2>1. Ringkasan</h2>
+<div class="box">
+<ul>
+  <li>Tiada akaun atau pendaftaran diperlukan.</li>
+  <li>Kami tidak menjual data peribadi.</li>
+  <li>Kami tidak menggunakan alat pengiklanan untuk membina profil pengguna.</li>
+  <li>Kami membenarkan iklan Google AdSense untuk sokongan kewangan.</li>
+</ul>
+</div>
+
+<h2>2. Data yang dikumpul</h2>
+
+<h3>2.1 Log pelayan</h3>
+<p>Apabila anda menggunakan enjin carian, pelayan kami merekod alamat IP, masa, dan laluan yang diminta. Log ini digunakan untuk mengesan dan menyekat serangan (contoh rate limiting), serta memastikan kestabilan perkhidmatan. Log tidak digunakan untuk pengiklanan.</p>
+
+<h3>2.2 Kuki</h3>
+<p>Perkhidmatan sendiri tidak menggunakan kuki. Tiada sesi carian disimpan dan tiada pelacak dipasang.</p>
+<div class="box">
+<p><strong>Google AdSense</strong> dan pembekal iklan mungkin menggunakan kuki untuk mengukur keberkesanan iklan. Kuki ini dikawal oleh Google, bukan oleh kami. Anda boleh mengawalnya melalui <a href="https://myadcenter.google.com/" rel="noopener noreferrer">Google Ad Center</a> atau tetapan privasi pelayar anda.</p>
+</div>
+
+<h3>2.3 Kandungan yang diindeks</h3>
+<p>Perkhidmatan ini mengindeks halaman web awam supaya carian dapat berfungsi. Bagi setiap halaman, kami menyimpan tajuk, deskripsi, sehingga 6000 aksara teks, pautan, dan alamat URL. Kami menghormati fail <code>robots.txt</code> dan tidak mengindeks halaman yang dihalang.</p>
+
+<h3>2.4 Pihak ketiga</h3>
+<p>Pihak ketiga yang mungkin menerima data:</p>
+<ul>
+  <li><strong>Google AdSense</strong> &mdash; iklan</li>
+  <li><strong>Cloudflare</strong> &mdash; rangkaian penghantaran kandungan, sijil TLS, dan firewall</li>
+</ul>
+
+<h2>3. Tujuan pemprosesan</h2>
+<p>Data diproses untuk menyediakan fungsi carian, memastikan kestabilan perkhidmatan, melindungi sistem daripada serangan, dan monetisasi melalui iklan.</p>
+
+<h2>4. Pengekalan</h2>
+<ul>
+  <li>Log pelayan: disimpan maksimum 30 hari.</li>
+  <li>Dokumen terindeks: kekal sehingga kandungan sumber berubah atau atas permintaan pemilik.</li>
+</ul>
+
+<h2>5. Hak pengguna</h2>
+<p>Anda boleh meminta:</p>
+<ul>
+  <li>salinan data yang kami simpan tentang anda;</li>
+  <li>pemadaman rekod log anda;</li>
+  <li>pengeluaran halaman anda daripada index &mdash; hantar URL melalui halaman <a href="/contact">Hubungi</a>.</li>
+</ul>
+<p>Kami menjawab dalam 14 hari bekerja.</p>
+
+<h2>6. Hak cipta pihak ketiga</h2>
+<p>Perkhidmatan ini mengindeks halaman pihak ketiga. Kandungan asal kekal menjadi hak cipta pemilik asal. Untuk permintaanliu boleh hubungi kami dan kami akan mengeluarkan URL daripada index.</p>
+
+<h2>7. Perubahan pada dasar ini</h2>
+<p>Dasar ini boleh dikemas kini. Tarikh kemas kini dipaparkan di atas. Perubahan ketara akan dinyatakan di <a href="/">laman utama</a>.</p>
+
+<h2>8. Hubungi kami</h2>
+<p>Soalan tentang privasi: <a href="/contact">hubungi kami</a>.</p>
+</main>
+
+<footer class="wrap">Tukuk-OS &middot; lesen ISC &middot; <a href="/">enjin carian</a></footer>
+</body>
+</html>

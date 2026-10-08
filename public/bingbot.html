@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify Bingbot &mdash; Tukuk-OS</title>
+<meta name="description" content="Check whether an IP address belongs to Bingbot: reverse DNS, forward-confirmation and Microsoft's published IP list.">
+<link rel="canonical" href="https://tukuk.org/bingbot">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tukuk-OS">
+<meta property="og:title" content="Verify Bingbot &mdash; Tukuk-OS">
+<meta property="og:description" content="Check whether an IP address belongs to Bingbot: reverse DNS, forward-confirmation and Microsoft's published IP list.">
+<meta property="og:url" content="https://tukuk.org/bingbot">
+<meta property="og:image" content="https://tukuk.org/og.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Verify Bingbot &mdash; Tukuk-OS">
+<meta name="twitter:description" content="Check whether an IP address belongs to Bingbot: reverse DNS, forward-confirmation and Microsoft's published IP list.">
+<meta name="twitter:image" content="https://tukuk.org/og.png">
+
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#4c8dff">
+<style>
+  :root { --bg:#0f1115; --panel:#171a21; --line:#262b36; --text:#e6e9ef; --muted:#9aa3b2; --accent:#4c8dff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.75 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:0 20px; }
+  header { padding:48px 0 8px; }
+  h1 { margin:0 0 6px; font-size:2rem; letter-spacing:-.4px; }
+  h2 { margin:34px 0 10px; font-size:1.18rem; }
+  .updated { color:var(--muted); font-size:.9rem; margin:0; }
+  a { color:var(--accent); }
+  nav { display:flex; gap:14px; flex-wrap:wrap; margin:24px 0 0; padding:16px 0;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line); font-size:.9rem; }
+  footer { margin:44px 0; color:var(--muted); font-size:.88rem; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:18px 0; }
+  code, .mono { background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-size:.9em; }
+  ol, ul { padding-left:22px; }
+  li { margin:6px 0; }
+
+  .tool { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; margin:20px 0; }
+  .tool-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .tool input[type=text] { flex:1; min-width:220px; padding:10px 12px; border-radius:8px;
+    border:1px solid var(--line); background:var(--bg); color:var(--text); font-size:1rem; font-family:ui-monospace,Menlo,Consolas,monospace; }
+  .tool button { padding:10px 16px; border-radius:8px; border:1px solid var(--accent);
+    background:var(--accent); color:#fff; font-size:.95rem; font-weight:600; cursor:pointer; }
+  .tool button.ghost { background:transparent; color:var(--accent); }
+  .tool button:hover { filter:brightness(1.1); }
+  .hint { color:var(--muted); font-size:.85rem; margin:10px 0 0; }
+  #result { display:none; margin-top:16px; }
+  .verdict { display:inline-block; font-weight:700; letter-spacing:.5px; font-size:.95rem;
+    padding:6px 12px; border-radius:8px; border:1px solid var(--line); }
+  .verdict.ok { background:#12331d; border-color:#2e7d46; color:#6fdf97; }
+  .verdict.bad { background:#33161a; border-color:#a33; color:#ff8a8a; }
+  .verdict.warn { background:#33280f; border-color:#a0792a; color:#f0c060; }
+  .verdict.mute { background:#1c1f27; color:var(--muted); }
+  #why { margin:10px 0 4px; }
+  #detail { list-style:none; padding:0; font-size:.9rem; color:var(--muted); }
+  #detail li { margin:4px 0; border-bottom:1px dashed var(--line); padding:4px 0; }
+  #detail b { color:var(--text); font-weight:600; }
+  #err { color:#ff8a8a; display:none; margin-top:12px; }
+
+  .ad-slot{margin:24px 0;overflow:hidden;}
+</style>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8954948214333501" crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-8954948214333501">
+<!-- Clarity tracking code for https://tukuk.org/ -->
+<script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ytshvg0zer");
+</script>
+<script async src="https://fundingchoicesmessages.google.com/i/pub-8954948214333501?ers=1"></script><script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
+<script src="/fc-error.js"></script>
+</head>
+<body>
+<header class="wrap">
+  <h1>Verify Bingbot</h1>
+  <p class="updated">Official method: reverse DNS + forward-confirmation &middot; tukuk.org</p>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/explore">Explore</a>
+    <a href="/nasa">NASA</a>
+    <a href="/blog">Blog</a>
+    <a href="/docs">Docs</a>
+    <a href="/about">About</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="/contact">Contact</a>
+    <span class="theme-tools">
+      <button type="button" id="theme-toggle" class="tk-btn" aria-label="Colour theme">◐</button>
+      <span class="tk-accents" role="group" aria-label="Accent colour">
+        <button type="button" data-accent-set="blue" class="tk-dot" aria-label="Blue"></button>
+        <button type="button" data-accent-set="green" class="tk-dot" aria-label="Green"></button>
+        <button type="button" data-accent-set="violet" class="tk-dot" aria-label="Violet"></button>
+        <button type="button" data-accent-set="amber" class="tk-dot" aria-label="Amber"></button>
+        <button type="button" data-accent-set="rose" class="tk-dot" aria-label="Rose"></button>
+      </span>
+    </span>
+  </nav>
+</header>
+<main class="wrap">
+    <div class="ad-slot"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8954948214333501" data-ad-slot="2206273113" data-ad-format="auto" data-full-width-responsive="true"></ins></div>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+<p>Paste an IP address that claims to be Bingbot (for example one from your server logs) and check it against Microsoft's official method. If nothing is entered, your own IP is checked.</p>
+
+<div class="tool">
+  <div class="tool-row">
+    <input type="text" id="ip" placeholder="157.55.39.212" spellcheck="false" autocomplete="off" aria-label="IP address">
+    <button type="button" id="go">Verify</button>
+    <button type="button" id="mine" class="ghost">Check my IP</button>
+  </div>
+  <p class="hint">Try the sample above: a live Bingbot address from Microsoft's published ranges.</p>
+  <div id="result" role="status">
+    <span class="verdict" id="verdict"></span>
+    <p id="why"></p>
+    <ul id="detail"></ul>
+  </div>
+  <p id="err"></p>
+</div>
+
+<h2>How verification works</h2>
+<ol>
+  <li><strong>Reverse DNS</strong> &mdash; the hostname for the IP must end in <code>.search.msn.com</code>.</li>
+  <li><strong>Forward-confirmation</strong> (FCrDNS) &mdash; that hostname must resolve back to the same IP.</li>
+  <li><strong>Published list</strong> &mdash; Microsoft also publishes its crawl ranges at <a href="https://www.bing.com/toolbox/bingbot.json">bing.com/toolbox/bingbot.json</a>; IPs there are accepted even when reverse DNS is missing (some Bingbot subnets publish no PTR records).</li>
+</ol>
+
+<div class="box">
+  <p><strong>Result not matching your logs?</strong> Report a false positive or false negative through Bing Webmaster Tools &rarr; <em>Tools &amp; Enhancements &rarr; Verify Bingbot</em>, or read <a href="https://www.bing.com/webmasters/help?topicid=25c19802">How to Report an Issue with Bingbot</a>.</p>
+  <p>Reference: <a href="https://www.bing.com/webmasters/help/how-to-verify-bingbot-3905dc26">How to verify Bingbot</a> &middot; <a href="https://www.bing.com/toolbox/verify-bingbot">Bing's own tool</a> &middot; <a href="/docs">our API</a></p>
+</div>
+
+<h2>API</h2>
+<div class="box">
+  <p><code>GET /api/bingbot?ip=157.55.39.212</code> &mdash; omit <code>ip</code> to check the caller's IP (via <code>CF-Connecting-IP</code>).</p>
+  <p>Response: <code>verdict</code> (<code>verified</code>, <code>mismatch</code>, <code>not-bingbot</code>, <code>inconclusive</code>), <code>rdns</code>, <code>forward</code>, <code>publishedList</code>.</p>
+</div>
+
+</main>
+<footer class="wrap">Tukuk-OS &middot; ISC licence &middot; <a href="/">search engine</a></footer>
+<script>
+(function () {
+  var esc = function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  var box = document.getElementById('result');
+  var verdictEl = document.getElementById('verdict');
+  var whyEl = document.getElementById('why');
+  var detailEl = document.getElementById('detail');
+  var errEl = document.getElementById('err');
+  var input = document.getElementById('ip');
+
+  var CLASSES = { verified: 'ok', 'not-bingbot': 'bad', mismatch: 'warn', inconclusive: 'mute' };
+
+  function show(data) {
+    errEl.style.display = 'none';
+    if (!data.valid) {
+      box.style.display = 'none';
+      errEl.textContent = data.error || 'Semakan gagal';
+      errEl.style.display = 'block';
+      return;
+    }
+    verdictEl.textContent = data.label;
+    verdictEl.className = 'verdict ' + (CLASSES[data.verdict] || 'mute');
+    whyEl.textContent = data.why;
+    var rows = [
+      ['IP', data.ip],
+      ['Reverse DNS', data.rdns.matched || (data.rdns.hostnames.length ? data.rdns.hostnames.join(', ') : '(no PTR record)')],
+      ['Forward-confirm', data.forward.checked ? (data.forward.ok ? 'OK → ' + data.forward.addresses.join(', ') : 'MISMATCH → ' + (data.forward.addresses.join(', ') || 'no answer')) : 'skipped (no rDNS)'],
+      ['Published list', data.listStatus !== 'ok' ? 'unavailable (' + data.listStatus + ')' : (data.publishedList ? 'yes — found in bingbot.json' : 'no — not in bingbot.json')],
+      ['Checked', data.checkedAt + ' · ' + data.tookMs + 'ms']
+    ];
+    detailEl.innerHTML = rows.map(function (r) {
+      return '<li><b>' + esc(r[0]) + ':</b> ' + esc(r[1]) + '</li>';
+    }).join('');
+    box.style.display = 'block';
+  }
+
+  function run(ip) {
+    verdictEl.textContent = 'CHECKING…';
+    verdictEl.className = 'verdict mute';
+    whyEl.textContent = '';
+    detailEl.innerHTML = '';
+    box.style.display = 'block';
+    errEl.style.display = 'none';
+    var url = ip ? '/api/bingbot?ip=' + encodeURIComponent(ip) : '/api/bingbot';
+    fetch(url, { headers: { 'accept': 'application/json' } })
+      .then(function (r) { return r.json(); })
+      .then(show)
+      .catch(function () {
+        box.style.display = 'none';
+        errEl.textContent = 'Request failed — try again.';
+        errEl.style.display = 'block';
+      });
+  }
+
+  document.getElementById('go').addEventListener('click', function () {
+    run(input.value.trim());
+  });
+  document.getElementById('mine').addEventListener('click', function () {
+    input.value = '';
+    run('');
+  });
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') run(input.value.trim());
+  });
+})();
+</script>
+</body>
+</html>

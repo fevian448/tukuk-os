@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tentang &mdash; Tukuk-OS</title>
+<meta name="description" content="Mengenal pasti Tukuk-OS: enjin carian web untuk tukuk.org, reka bentuk dan ciri.">
+<link rel="canonical" href="/tentang">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128269;</text></svg>">
+<style>
+  :root { --bg:#0f1115; --panel:#171a21; --line:#262b36; --text:#e6e9ef; --muted:#9aa3b2; --accent:#4c8dff; }
+  @media (prefers-color-scheme: light) { :root { --bg:#f7f8fa; --panel:#fff; --line:#e3e6ec; --text:#151922; --muted:#5c6472; --accent:#1f6feb; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.75 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:0 20px; }
+  header { padding:48px 0 8px; }
+  h1 { margin:0 0 6px; font-size:2rem; letter-spacing:-.4px; }
+  h2 { margin:34px 0 10px; font-size:1.18rem; }
+  h3 { margin:22px 0 8px; font-size:1rem; color:var(--muted); }
+  .updated { color:var(--muted); font-size:.9rem; margin:0; }
+  a { color:var(--accent); }
+  nav { display:flex; gap:14px; flex-wrap:wrap; margin:24px 0 0; padding:16px 0;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line); font-size:.9rem; }
+  footer { margin:44px 0; color:var(--muted); font-size:.88rem; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:18px 0; }
+  code { background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-size:.9em; }
+  table { border-collapse:collapse; width:100%; margin:14px 0; font-size:.94rem; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>Tentang</h1>
+  <p class="updated">Kemas kini: 5 Oktober 2026 &middot; tukuk.org</p>
+  <nav>
+    <a href="/">Carian</a><a href="/about">Tentang</a><a href="/privacy">Privasi</a>
+    <a href="/terms">Terma</a><a href="/contact">Hubungi</a><a href="/api">API</a>
+  </nav>
+</header>
+<main class="wrap">
+<p>Tukuk-OS ialah enjin carian web untuk domain <strong>tukuk.org</strong>. Ia dibina untuk mencari halaman web awam dalam Bahasa Melayu dan Inggeris, dengan keutamaan pada kualiti jawapan dan ketelusan sumber.</p>
+
+<h2>Bagaimana ia berfungsi</h2>
+<table>
+  <tr><th>Lapis</th><th>Peranan</th></tr>
+  <tr><td>Meilisearch</td><td>Menyimpan dan menokia indeks terbalik. Berjalan pada port 7700.</td></tr>
+  <tr><td>Pelayan API</td><td>Node.js + Express, port 8000. Menyediakan carian, crawler, dan API.</td></tr>
+  <tr><td>Crawler</td><td>Kod sendiri. Menghormati robots.txt, mengelakkan alamat dalaman.</td></tr>
+  <tr><td>Otak</td><td>Model bahasa kecil melalui Ollama. Membina jawapan daripada sumber yang dijumpai.</td></tr>
+</table>
+
+<h2>Ciri carian</h2>
+<ul>
+  <li>Sorotan kata dan ringkasan dengan konteks</li>
+  <li>Toleransi silap ejaan automatik</li>
+  <li>Sinonim Bahasa Melayu (cari, carian, pencarian, geledah)</li>
+  <li>Facet: laman, bahasa, jenis kandungan</li>
+  <li>Penapis masa, bilangan perkataan, domain</li>
+  <li>Cadangan autolengkap</li>
+</ul>
+
+<h2>Privasi dan ketelusan</h2>
+<p>Setiap jawapan daripada otak menyertakan senarai URL sumber. Jika tiada sumber mencukupi, sistem bertindak jujur dan mengatakan ia tidak tahu — ia tidak mengarang fakta.</p>
+
+<h2>Kod sumber</h2>
+<div class="box">
+<p>Kod ini tersedia di bawah lesen ISC.</p>
+</div>
+
+<h2>Hubungi</h2>
+<p>Untuk pertanyaan dan laporan pepijat: <a href="/contact">hubungi kami</a>.</p>
+</main>
+<footer class="wrap">Tukuk-OS &middot; lesen ISC &middot; <a href="/">enjin carian</a></footer>
+</body>
+</html>

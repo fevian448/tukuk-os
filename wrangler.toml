@@ -1,0 +1,7 @@
+[[kv_namespaces]]
+binding = "TUKUK_KV"
+id = "6b4121f83fc04c8daf5df901cc2816ae"
+[[d1_databases]]
+binding = "DB"
+database_name = "tukuk-os-db"
+database_id = "86729e04-c708-425e-bb70-78e9b419627e"

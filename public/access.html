@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Global Access &mdash; Tukuk-OS</title>
+<meta name="description" content="Reach Tukuk-OS from anywhere: onion address for Tor Browser, DNS-over-HTTPS when DNS is blocked, and a backup mirror.">
+<link rel="canonical" href="https://tukuk.org/access">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tukuk-OS">
+<meta property="og:title" content="Global Access &mdash; Tukuk-OS">
+<meta property="og:description" content="Reach Tukuk-OS from anywhere: onion address for Tor Browser, DNS-over-HTTPS when DNS is blocked, and a backup mirror.">
+<meta property="og:url" content="https://tukuk.org/access">
+<meta property="og:image" content="https://tukuk.org/og.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Global Access &mdash; Tukuk-OS">
+<meta name="twitter:description" content="Reach Tukuk-OS from anywhere: onion address for Tor Browser, DNS-over-HTTPS when DNS is blocked, and a backup mirror.">
+<meta name="twitter:image" content="https://tukuk.org/og.png">
+
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#4c8dff">
+<style>
+  :focus-visible { outline:2px solid var(--accent,#4c8dff); outline-offset:2px; }
+
+  :root { --bg:#0f1115; --panel:#171a21; --line:#262b36; --text:#e6e9ef; --muted:#9aa3b2; --accent:#4c8dff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.75 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:0 20px; }
+  header { padding:48px 0 8px; }
+  h1 { margin:0 0 6px; font-size:2rem; letter-spacing:-.4px; }
+  h2 { margin:36px 0 10px; font-size:1.2rem; }
+  .updated { color:var(--muted); font-size:.9rem; margin:0; }
+  a { color:var(--accent); overflow-wrap:anywhere; }
+  nav { display:flex; gap:14px; flex-wrap:wrap; margin:24px 0 0; padding:16px 0;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line); font-size:.9rem; }
+  footer { margin:44px 0; color:var(--muted); font-size:.88rem; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:18px 0; }
+  .box h3 { margin:0 0 6px; font-size:1rem; }
+  .box p { margin:6px 0; }
+  .badge { display:inline-block; font-size:.72rem; font-weight:600; letter-spacing:.4px; text-transform:uppercase;
+    background:rgba(76,141,255,.15); color:var(--accent); border:1px solid rgba(76,141,255,.35);
+    border-radius:999px; padding:1px 8px; margin-left:8px; vertical-align:middle; }
+  .badge.alt { background:rgba(76,255,170,.12); color:#4cffaa; border-color:rgba(76,255,170,.3); }
+  .badge.mirror { background:rgba(255,196,76,.12); color:#ffc44c; border-color:rgba(255,196,76,.3); }
+  code { background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-size:.9em; overflow-wrap:anywhere; }
+  .onion { font-size:.95em; }
+  ol.steps { padding-left:1.3em; }
+  ol.steps li { margin:8px 0; }
+  .note { color:var(--muted); font-size:.9rem; }
+</style>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme.css">
+<!-- Clarity tracking code for https://tukuk.org/ -->
+<script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ytshvg0zer");
+</script>
+</head>
+<body>
+<header class="wrap">
+  <h1>Global Access</h1>
+  <p class="updated">Updated: 7 October 2026 &middot; every entry point below leads to the same Tukuk-OS.</p>
+</header>
+
+<main class="wrap">
+  <p>Tukuk-OS is served from hundreds of cities and offers several independent ways in.
+     If one path is blocked by your network or country, use another — the site content is identical everywhere.</p>
+
+  <div class="box">
+    <h3><span class="badge">Primary</span> Main website</h3>
+    <p><a href="https://tukuk.org">https://tukuk.org</a></p>
+    <p class="note">Cloudflare anycast edge — usually reachable worldwide, even where individual origin servers are filtered.</p>
+  </div>
+
+  <div class="box">
+    <h3><span class="badge alt">Onion</span> Tor Browser (recommended if the domain is blocked)</h3>
+    <p class="onion"><a href="http://d33axv7iaq4sp5hlwjn7i2tovkuxmxc53xl2drjhve7mboitsoicdfid.onion/">http://d33axv7iaq4sp5hlwjn7i2tovkuxmxc53xl2drjhve7mboitsoicdfid.onion/</a></p>
+    <ol class="steps">
+      <li>Install <a href="https://www.torproject.org/download" rel="noopener">Tor Browser</a>.</li>
+      <li>Paste the address above — or just open <code>https://tukuk.org</code>: the site sends an <code>Onion-Location</code> header, so Tor Browser will offer to open the onion version automatically.</li>
+      <li>Your connection leaves the Tor network inside our own server — no clearnet domain is needed at all.</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <h3><span class="badge mirror">Mirror</span> Backup mirror</h3>
+    <p><a href="https://tukuk-fallback.fevianbenjo48.workers.dev/">https://tukuk-fallback.fevianbenjo48.workers.dev/</a></p>
+    <p class="note">A static copy of the main pages on a different domain — useful if <code>tukuk.org</code> itself is DNS-blocked.</p>
+  </div>
+
+  <h2>If DNS is poisoned or blocked</h2>
+  <p>Use DNS-over-HTTPS (DoH) so your resolver cannot lie about where tukuk.org lives:</p>
+  <ol class="steps">
+    <li><strong>Firefox:</strong> Settings → Privacy &amp; Security → DNS over HTTPS → enable → choose <em>Cloudflare (1.1.1.1)</em> or <em>Google (dns.google)</em>.</li>
+    <li><strong>Chrome/Edge:</strong> Settings → Privacy and security → Security → Use secure DNS → pick a provider.</li>
+    <li><strong>Mobile:</strong> install the <em>1.1.1.1</em> app (Cloudflare WARP) or set a private DNS name (<code>one.one.one.one</code> / <code>dns.google</code>) in Android settings.</li>
+  </ol>
+
+  <h2>If Tor itself is blocked</h2>
+  <p>Tor Browser supports <strong>bridges</strong> — entry points that are not publicly listed:</p>
+  <ol class="steps">
+    <li>Tor Browser → hamburger menu → <em>Configure Connection</em> → <em>Use a bridge</em>.</li>
+    <li>Enable <em>Request a bridge</em> (built-in obfs4) or get bridges from <a href="https://bridges.torproject.org" rel="noopener">bridges.torproject.org</a> and paste them in.</li>
+    <li>Then open the onion address above as usual.</li>
+  </ol>
+
+  <h2>Honest limits</h2>
+  <p class="note">No service on Earth can promise it will never be blocked — any government can filter a domain, an IP or even a TLS fingerprint.
+     What Tukuk-OS does instead is keep <strong>several independent doors open</strong>: an anycast main domain, a Tor onion service, and a mirror on a separate domain.
+     If one door closes, another one leads to exactly the same site.</p>
+
+  <h2>Ownership &amp; Legal</h2>
+  <p>Tukuk-OS is an independent, self-hosted search engine and knowledge site. The content is original
+     (articles written for this site) or drawn from clearly public sources — it contains no infringing,
+     unlawful or restricted material. Any dispute, takedown request or legal question should go through
+     the <a href="/contact">contact channel</a> first; transparency and a real reply are always available.</p>
+  <p class="note">Being lawful cuts both ways: because there is nothing here that violates the law,
+     an arbitrary block of this site says more about the blocker than about the site.</p>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="/terms">Terms</a>
+  </nav>
+</main>
+
+<footer class="wrap">
+  <p>&copy; 2026 Tukuk-OS &middot; <a href="/">tukuk.org</a></p>
+</footer>
+</body>
+</html>

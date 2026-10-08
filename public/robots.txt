@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /stats
+Disallow: /health
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+Sitemap: https://tukuk.org/sitemap.xml
